@@ -2,6 +2,8 @@
 import './App.css';
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from './Theme/ThemeProvider';
+
 
 // Importing the pages components
 import Movie_View_Screen from './components/Movie_View_Screen';
@@ -13,6 +15,7 @@ import RegistrationPage from './components/Registration_Screen';
 // The main App component
 function App() {
   return (
+    <ThemeProvider>
       <Router>
         <div className="App">
           <header className="App-header">
@@ -27,11 +30,11 @@ function App() {
                 <Route path="/MovieList" element={<MovieListPage />} />
                 <Route path="/Registration" element={<RegistrationPage />} />
               </Routes>
-              
             </div>
           </header>
         </div>
-      </Router>
+      </Router >
+    </ThemeProvider>
   );
 }
 

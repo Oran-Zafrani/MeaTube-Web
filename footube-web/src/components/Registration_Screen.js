@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import axios from 'axios';
+import { ThemeContext } from '../Theme/ThemeContext';
 
 function Registration() {
   const [username, setUsername] = useState("");
@@ -8,6 +9,7 @@ function Registration() {
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [displayName, setDisplayName] = useState(""); // New state for display name
   const [imageUrl, setImageUrl] = useState(""); // New state for image URL
+  const { darkMode, toggleTheme } = useContext(ThemeContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,6 +25,7 @@ function Registration() {
   };
 
   return (
+    <div className={darkMode ? 'dark-mode' : ''}>
     <Form onSubmit={handleSubmit}>
       <Form.Group>
         <Form.Label>Username</Form.Label>
@@ -53,6 +56,8 @@ function Registration() {
         Register
       </Button>
     </Form>
+      <div/>
+      </div >
   );
 }
 
