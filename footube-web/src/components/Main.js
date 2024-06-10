@@ -32,8 +32,11 @@ function MovieView() {
             </div>
 
             <div id="theme-toggle">
-                <button onClick={toggleTheme}>Dark Mode</button>
+                <button onClick={toggleTheme}>
+                    {darkMode ? 'Regular Mode' : 'Dark Mode'}
+                </button>
             </div>
+
 
             <div id="AddMovie">
                 <button onClick={() => navigate('/AddMovie')}>AddMovie</button>
