@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 import { ThemeContext } from '../../Theme/ThemeContext';
+import { useNavigate } from 'react-router-dom';
 
 function Registration() {
   const [username, setUsername] = useState("");
@@ -10,18 +11,40 @@ function Registration() {
   const [displayName, setDisplayName] = useState(""); // New state for display name
   const [imageUrl, setImageUrl] = useState(""); // New state for image URL
   const { darkMode, toggleTheme } = useContext(ThemeContext);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Check if all fields are filled out
+    if (!username || !password || !passwordConfirmation || !displayName || !imageUrl) {
+      alert("All fields must be filled out!");
+      return;
+    }
+  
+    // Check if password and password confirmation match
     if (password !== passwordConfirmation) {
       alert("Passwords do not match!");
       return;
     }
 
-    const data = { username, password, displayName, imageUrl }; // Include display name and image URL in data
-    const response = await axios.post('/api/auth/register', data);
-    // handle response
+  // Check if user already exists
+  if (localStorage.getItem(username)) {
+    alert("User already exists!");
+    return;
+  }
+    
+     // Include display name and image URL in data object
+    const data = { username, password, displayName, imageUrl };
+  
+    // Store user's data in local storage
+    localStorage.setItem(username, JSON.stringify(data));
+  
+    alert('User registered successfully');
+
+    // Navigate to login page
+    navigate('/Login');
+    
   };
 
   return (

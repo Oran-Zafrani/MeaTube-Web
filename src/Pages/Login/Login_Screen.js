@@ -14,12 +14,29 @@ function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  // Function to handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault(); // Preventing default form submission behaviour
-    const data = { username, password }; // Creating data object with username and password
-    const response = await axios.post('/api/auth/login', data); // Making POST request to login API with data
-    // handle response
+  
+    // Check if user exists in local storage
+    const storedData = localStorage.getItem(username);
+    if (!storedData) {
+      alert("User does not exist!");
+      return;
+    }
+  
+    // Parse stored data
+    const { password: storedPassword } = JSON.parse(storedData);
+  
+    // Check if entered password matches stored password
+    if (password !== storedPassword) {
+      alert("Incorrect password!");
+      return;
+    }
+  
+    alert('User logged in successfully');
+  
+    // Navigate to home page
+    navigate('/');
   };
 
   // Rendering form
