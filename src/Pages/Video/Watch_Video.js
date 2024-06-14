@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'; // Importing React and useState hook from react
 import { ListGroup } from 'react-bootstrap';
-import { ThemeContext } from '../Theme/ThemeContext';
+import { ThemeContext } from '../../Theme/ThemeContext';
 
 function MovieList() {
   const { darkMode } = useContext(ThemeContext);
