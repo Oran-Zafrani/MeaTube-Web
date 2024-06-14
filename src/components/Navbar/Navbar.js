@@ -1,5 +1,6 @@
 import React from 'react';
 import logo from '../../assets/images/meatube logo with text.png';
+import profilePic from '../../assets/images/guest_image.png';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -22,7 +23,7 @@ const Navbar = () => {
                 <div className='nav-right flex-div'>
                     <i className="bi bi-upload"></i>
                     <i className="bi bi-bell"></i>
-                    <i className="bi bi-person profile"></i>
+                    <img className='profile' src={profilePic} alt='profile-pic'/>
                 </div>
             </nav>
         </div>
