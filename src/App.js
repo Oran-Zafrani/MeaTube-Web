@@ -10,11 +10,18 @@ import LoginPage from './components/Login_Screen';
 import AddMoviePage from './components/Add_Movie_Screen';
 import Watch_Movie from './components/Watch_Movie';
 import RegistrationPage from './components/Registration_Screen';
+import Navbar from './components/Navbar/Navbar';
 
 // The main App component
 function App() {
   return (
+    <div>
+    <div>
+      <Navbar/>
+    </div>
+    
     <ThemeProvider>
+
       <Router>
         <div className="App">
           <header className="App-header">
@@ -34,6 +41,7 @@ function App() {
         </div>
       </Router >
     </ThemeProvider>
+    </div>
   );
 }
 
