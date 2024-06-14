@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react'; // Importing React and useS
 import { Button, Form } from 'react-bootstrap'; // Importing Button and Form components from react-bootstrap
 import axios from 'axios'; // Importing axios for making HTTP requests
 import { useNavigate } from 'react-router-dom';
-import { ThemeContext } from '../Theme/ThemeContext';
+import { ThemeContext } from '../../Theme/ThemeContext';
 
 // Login component
 function Login() {

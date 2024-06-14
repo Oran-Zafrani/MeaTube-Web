@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import axios from 'axios';
-import { ThemeContext } from '../Theme/ThemeContext';
+import { ThemeContext } from '../../Theme/ThemeContext';
 
 function Registration() {
   const [username, setUsername] = useState("");

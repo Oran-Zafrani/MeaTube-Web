@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'; // Importing React and useState hook from react
 import { Button, Form } from 'react-bootstrap';
-import { ThemeContext } from '../Theme/ThemeContext';
+import { ThemeContext } from '../../Theme/ThemeContext';
 
 function AddMovie() {
     const { darkMode } = useContext(ThemeContext);

@@ -5,12 +5,11 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './Theme/ThemeProvider';
 
 // Importing the pages components
-import Main from './components/Main';
-import LoginPage from './components/Login_Screen';
-import AddMoviePage from './components/Add_Movie_Screen';
-import Watch_Movie from './components/Watch_Movie';
-import RegistrationPage from './components/Registration_Screen';
-import Navbar from './components/Navbar/Navbar';
+import Main from './Pages/Main/Main';
+import LoginPage from './Pages/Login/Login_Screen';
+import AddMoviePage from './Pages/AddVideo/Add_Video';
+import Watch_Movie from './Pages/Video/Watch_Video';
+import RegistrationPage from './Pages/Register/Registration_Screen';
 
 // The main App component
 function App() {
