@@ -10,12 +10,19 @@ function Login() {
   const navigate = useNavigate();
   const { darkMode } = useContext(ThemeContext);
 
+
   // useState hook to manage username and password state
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Preventing default form submission behaviour
+
+    // Check if username and password are filled out
+    if (!username || !password) {
+      alert("Please fill in all fields!");
+      return;
+    }
   
     // Check if user exists in local storage
     const storedData = localStorage.getItem(username);
@@ -34,6 +41,9 @@ function Login() {
     }
   
     alert('User logged in successfully');
+
+    // Save logged-in user to local storage
+    localStorage.setItem('loggedInUser', username);
   
     // Navigate to home page
     navigate('/');
