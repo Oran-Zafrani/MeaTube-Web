@@ -9,7 +9,7 @@ const Navbar = () => {
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css"></link>
             <nav className='flex-div'>
                 <div className='nav-left flex-div'>
-                    <i class="bi bi-list"></i>
+                    <i className="bi bi-list"></i>
                     <img className='logo' src={logo} alt='logo'/>
                 </div>
 
