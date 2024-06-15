@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ThemeContext } from '../../Theme/ThemeContext';
+import Sidebar from '../../Components/Sidebar/Sidebar';
 
 function MovieView() {
     const navigate = useNavigate();
@@ -8,6 +9,10 @@ function MovieView() {
 
     return (
         <div className={darkMode ? 'dark-mode' : ''}>
+            <>
+                < Sidebar />
+            </>
+
             <div id="left-menu">
                 <ul>
                     <li><a href="#">Menu Item 1</a></li>
