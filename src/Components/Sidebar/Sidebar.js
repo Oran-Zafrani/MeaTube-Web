@@ -7,9 +7,9 @@ import pork from '../../assets/images/pig.svg';
 import fish from '../../assets/images/fish.svg';
 import vegan from '../../assets/images/vegan.svg';
 
-function Sidebar() {
+function Sidebar({sidebar}) {
     return (
-        <div className='sidebar'>
+        <div className={`sidebar ${sidebar? '':'small-sidebar'}`}>
             <div className='shortcut-links'>
 
                 <div className='side-link'>

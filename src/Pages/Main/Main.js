@@ -3,14 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { ThemeContext } from '../../Theme/ThemeContext';
 import Sidebar from '../../Components/Sidebar/Sidebar';
 
-function MovieView() {
+function Main({sidebar}) {
     const navigate = useNavigate();
     const { darkMode, toggleTheme } = useContext(ThemeContext); // Added darkMode here
-
     return (
         <div className={darkMode ? 'dark-mode' : ''}>
             <>
-                < Sidebar />
+                < Sidebar sidebar={sidebar} />
             </>
 
             <div id="left-menu">
@@ -50,4 +49,4 @@ function MovieView() {
     );
 }
 
-export default MovieView;
+export default Main;

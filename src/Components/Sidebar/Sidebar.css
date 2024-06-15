@@ -1,6 +1,6 @@
 .sidebar{
     background: #ffffff;
-    width: 15%;
+    width: 10%;
     height: 100vh;
     position: fixed;
     top: 0;
@@ -34,6 +34,26 @@
 
 .subscribed-list h3{
     font-size: 13px;
+    text-align: left;
     margin: 20px 0;
     color: #5a5a5a;
+}
+
+.small-sidebar{
+    width: 5%;
+}
+.small-sidebar p{
+    display: none;
+}
+
+.small-sidebar h3{
+    display: none;
+}
+
+.small-sidebar h3{
+    display: none;
+}
+.small-sidebar hr{
+    width: 50%;
+    margin-bottom: 25px;
 }

@@ -1,6 +1,6 @@
 // Importing necessary modules and components
 import './App.css';
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './Theme/ThemeProvider';
 
@@ -17,10 +17,13 @@ import Navbar from './Components/Navbar/Navbar';
 
 // The main App component
 function App() {
+
+  const [sidebar, setSidebar] = useState(true);
+
   return (
     <div>
     <div>
-      <Navbar/>
+      <Navbar setSidebar={setSidebar}/>
     </div>
     
     <ThemeProvider>
@@ -32,7 +35,7 @@ function App() {
               <Routes>
                 {/* The Route for the Movie_View_Screen is set to the root path ("/") */}
                 {/* This means that the Movie_View_Screen will be the first to render when the app starts */}
-                <Route path="/" element={<Main />} />
+                <Route path="/" element={<Main sidebar={sidebar} />} />
                 {/* Adding all the other pages */}
                 <Route path="/Login" element={<LoginPage />} />
                 <Route path="/AddMovie" element={<AddMoviePage />} />
