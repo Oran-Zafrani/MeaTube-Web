@@ -11,6 +11,10 @@ import AddMoviePage from './Pages/AddVideo/Add_Video';
 import Watch_Video from './Pages/Video/Watch_Video';
 import RegistrationPage from './Pages/Register/Registration_Screen';
 
+// Importing the components
+import Navbar from './Components/Navbar/Navbar';
+
+
 // The main App component
 function App() {
 
