@@ -1,7 +1,6 @@
 import React from 'react';
 import './Feed.css';
 import FeedJson from '../../../src/assets/jsons/Feed.json';
-import { Link } from 'react-router-dom';
 import VideoCard from './VideoCard';
 // Import any necessary modules or components
 
