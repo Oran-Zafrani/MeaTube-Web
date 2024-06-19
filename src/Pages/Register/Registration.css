@@ -2,3 +2,7 @@
     width: 50px; /* smaller size */
     height: auto; /* keep the aspect ratio */
   }
+
+.registration {
+  padding-top: 75px;
+}

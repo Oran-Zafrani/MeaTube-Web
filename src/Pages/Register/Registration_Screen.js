@@ -59,7 +59,7 @@ function Registration() {
   };
 
   return (
-    <div className={darkMode ? 'dark-mode' : ''}>
+    <div className={`registration ${darkMode ? 'dark-mode' : ''}`}>
     <Form onSubmit={handleSubmit}>
       <Form.Group>
         <Form.Label>Username</Form.Label>

@@ -26,16 +26,17 @@ function App() {
 
   return (
     <div>
-    <div>
-      <Navbar setSidebar={setSidebar}/>
-    </div>
-    
+  
     <ThemeProvider>
 
       <Router>
         <div className="App">
           <header className="App-header">
             <div className="App">
+
+              <div>
+                <Navbar setSidebar={setSidebar}/>
+              </div>
               <Routes>
                 {/* The Route for the Movie_View_Screen is set to the root path ("/") */}
                 {/* This means that the Movie_View_Screen will be the first to render when the app starts */}

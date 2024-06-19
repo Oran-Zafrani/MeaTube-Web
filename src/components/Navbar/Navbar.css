@@ -54,3 +54,7 @@ nav{
     width: 35px;
     margin-right: 25px;
 }
+
+.bi-upload{
+    cursor: pointer;
+}

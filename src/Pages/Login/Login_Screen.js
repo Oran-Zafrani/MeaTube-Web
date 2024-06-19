@@ -3,6 +3,7 @@ import { Button, Form } from 'react-bootstrap'; // Importing Button and Form com
 import axios from 'axios'; // Importing axios for making HTTP requests
 import { useNavigate } from 'react-router-dom';
 import { ThemeContext } from '../../Theme/ThemeContext';
+import './Login_Screen.css'; 
 
 // Login component
 function Login() {
@@ -51,7 +52,7 @@ function Login() {
 
   // Rendering form
   return (
-      <div className={darkMode ? 'dark-mode' : ''}>
+      <div className={`login ${darkMode ? 'dark-mode' : ''}`}>
         <Form onSubmit={handleSubmit}> {/* Form submission handled by handleSubmit function */}
           <Form.Group>
             <Form.Label>Username</Form.Label>
