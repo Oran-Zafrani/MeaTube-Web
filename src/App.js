@@ -1,6 +1,6 @@
 // Importing necessary modules and components
 import './App.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect  } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './Theme/ThemeProvider';
 
@@ -17,8 +17,12 @@ import Navbar from './Components/Navbar/Navbar';
 
 // The main App component
 function App() {
-
   const [sidebar, setSidebar] = useState(true);
+  // Using the useEffect hook to set the loggedInUser to null when the app starts
+  useEffect(() => {
+    localStorage.setItem('loggedInUser', null);
+  }, []);
+
 
   return (
     <div>
