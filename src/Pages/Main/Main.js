@@ -2,6 +2,8 @@ import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ThemeContext } from '../../Theme/ThemeContext';
 import Sidebar from '../../Components/Sidebar/Sidebar';
+import Feed from '../../Components/Feed/Feed';
+import './Main.css';
 
 function Main({sidebar}) {
     const navigate = useNavigate();
@@ -10,25 +12,9 @@ function Main({sidebar}) {
         <div className={darkMode ? 'dark-mode' : ''}>
             <>
                 < Sidebar sidebar={sidebar} />
-            </>
-
-            <div id="left-menu">
-                <ul>
-                    <li><a href="#">Menu Item 1</a></li>
-                    <li><a href="#">Menu Item 2</a></li>
-                    <li><a href="#">Menu Item 3</a></li>
-                </ul>
-            </div>
-
-            <div id="search">
-                <input type="text" placeholder="Search..." />
-            </div>
-
-            <div id="movie-list">
-                <div className="movie-item">
-                    <h1>Movie Title</h1>
-                    <p>Movie Description</p>
-                </div>
+            </>          
+            <div className = {`container ${sidebar ? '' : 'large-container'}`}>
+                    <Feed />
             </div>
 
             <div id="login">
