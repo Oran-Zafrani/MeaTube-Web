@@ -48,12 +48,12 @@ function AddMovie() {
         // Create a new video object
         let newVideo = {
             // If there are no videos, set the videoId to 1. Otherwise, set it to the length of the videos array + 1
-            "videoId": videos.length + 1,
+            "id": videos.length + 1,
             "title": title,
             "description": description,
             "videoFile": videoFile,
             "previewImage": previewImage,
-            "username": loggedInUser,
+            "channel": loggedInUser,
             "uploadTime": new Date().toISOString(),
             "views": 0,
             "likes": 0,
