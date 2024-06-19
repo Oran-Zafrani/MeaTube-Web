@@ -23,57 +23,56 @@ function Login() {
       alert("Please fill in all fields!");
       return;
     }
-  
+
     // Check if user exists in local storage
     const storedData = localStorage.getItem(username);
     if (!storedData) {
       alert("User does not exist!");
       return;
     }
-  
+
     // Parse stored data
     const { password: storedPassword } = JSON.parse(storedData);
-  
+
     // Check if entered password matches stored password
     if (password !== storedPassword) {
       alert("Incorrect password!");
       return;
     }
-  
+
     alert('User logged in successfully');
 
     // Save logged-in user to local storage
     localStorage.setItem('loggedInUser', username);
-  
+
     // Navigate to home page
     navigate('/');
   };
 
   // Rendering form
   return (
-    <div className={darkMode ? 'dark-mode' : ''}>
-      <Form onSubmit={handleSubmit}> {/* Form submission handled by handleSubmit function */}
-        <Form.Group>
-          <Form.Label>Username</Form.Label>
-          <Form.Control type="text" value={username} onChange={e => setUsername(e.target.value)} placeholder="Enter username" /> {/* Input field for username */}
-        </Form.Group>
-  
-        <Form.Group>
-          <Form.Label>Password</Form.Label>
-          <Form.Control type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" /> {/* Input field for password */}
-        </Form.Group>
-  
-        <Button variant="primary" type="submit"> {/* login button */}
-          Login
-        </Button>
-  
-        <Button variant="primary" onClick={() => navigate('/Registration')}> {/* Navigate to register page when button is clicked */}
-          Register
-        </Button>
-  
-      </Form>
-      <div/>
-    </div>
+      <div className={darkMode ? 'dark-mode' : ''}>
+        <Form onSubmit={handleSubmit}> {/* Form submission handled by handleSubmit function */}
+          <Form.Group>
+            <Form.Label>Username</Form.Label>
+            <Form.Control type="text" value={username} onChange={e => setUsername(e.target.value)} placeholder="Enter username" /> {/* Input field for username */}
+          </Form.Group>
+
+          <Form.Group>
+            <Form.Label>Password</Form.Label>
+            <Form.Control type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" /> {/* Input field for password */}
+          </Form.Group>
+
+          <Button variant="primary" type="submit"> {/* login button */}
+            Login
+          </Button>
+
+          <Button variant="primary" onClick={() => navigate('/Registration')}> {/* Navigate to register page when button is clicked */}
+            Register
+          </Button>
+
+        </Form>
+      </div>
   );
 }
 
