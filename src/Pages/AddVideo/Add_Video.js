@@ -79,41 +79,42 @@ function AddMovie() {
         setDescription('');
         setVideoFile(null);
         setPreviewImage(null);
+        setCategory('');
     };
 
     return (
-        <div className={`container ${darkMode ? 'dark-mode' : ''}`}>
-            <Form ref={formRef} onSubmit={handleSubmit}>
-                <Form.Group>
-                    <Form.Label>Movie Title</Form.Label>
-                    <Form.Control type="text" placeholder="Enter movie title" value={title} onChange={(e) => setTitle(e.target.value)} />
-                </Form.Group>
-
-                <Form.Group>
-                    <Form.Label>Movie Description</Form.Label>
-                    <Form.Control type="text" placeholder="Enter movie description" value={description} onChange={(e) => setDescription(e.target.value)} />
-                </Form.Group>
-
-                <Form.Group>
-                    <Form.Label>Category</Form.Label>
-                    <Form.Control type="text" placeholder="Enter category" value={category} onChange={(e) => setCategory(e.target.value)} />
-                </Form.Group>
-
-                <Form.Group>
-                    <Form.Label>Upload Video</Form.Label>
-                    <Form.Control type="file" accept="video/*" onChange={(e) => setVideoFile(e.target.files[0])} />
-                </Form.Group>
-
-                <Form.Group>
-                    <Form.Label>Preview Image</Form.Label>
-                    <Form.Control type="file" accept="image/*" onChange={(e) => setPreviewImage(e.target.files[0])} />
-                </Form.Group>
-
-                <Button variant="primary" type="submit">
-                    Add Movie
-                </Button>
+        <div className={`min-h-screen flex items-center justify-center bg-zinc-100 dark:bg-zinc-900 ${darkMode ? 'dark-mode' : ''}`}>
+            <Form className="login-form" ref={formRef} onSubmit={handleSubmit}>
+                <div className="left">
+                    <h1 className="text-2xl font-semibold">Add Video</h1>
+                    <p className="text-zinc">to add a new movie to MeaTube</p>
+                </div>
+                <div className="right">
+                    <Form.Group className="mb-4">
+                        <Form.Label className="block text-sm font-medium text-zinc">Movie Title</Form.Label>
+                        <Form.Control type="text" placeholder="Enter movie title" value={title} onChange={(e) => setTitle(e.target.value)} className="input-field" />
+                    </Form.Group>
+                    <Form.Group className="mb-4">
+                        <Form.Label className="block text-sm font-medium text-zinc">Movie Description</Form.Label>
+                        <Form.Control type="text" placeholder="Enter movie description" value={description} onChange={(e) => setDescription(e.target.value)} className="input-field" />
+                    </Form.Group>
+                    <Form.Group className="mb-4">
+                        <Form.Label className="block text-sm font-medium text-zinc">Category</Form.Label>
+                        <Form.Control type="text" placeholder="Enter category" value={category} onChange={(e) => setCategory(e.target.value)} className="input-field" />
+                    </Form.Group>
+                    <Form.Group className="mb-4">
+                        <Form.Label className="block text-sm font-medium text-zinc">Upload Video</Form.Label>
+                        <Form.Control type="file" accept="video/*" onChange={(e) => setVideoFile(e.target.files[0])} className="input-field" />
+                    </Form.Group>
+                    <Form.Group className="mb-4">
+                        <Form.Label className="block text-sm font-medium text-zinc">Preview Image</Form.Label>
+                        <Form.Control type="file" accept="image/*" onChange={(e) => setPreviewImage(e.target.files[0])} className="input-field" />
+                    </Form.Group>
+                    <div className="flex justify-end">
+                        <Button variant="primary" type="submit" className="submit-button">Add Movie</Button>
+                    </div>
+                </div>
             </Form>
-            <div />
         </div>
     );
 }
