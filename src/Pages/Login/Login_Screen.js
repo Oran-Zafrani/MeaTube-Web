@@ -3,7 +3,7 @@ import { Button, Form } from 'react-bootstrap'; // Importing Button and Form com
 import axios from 'axios'; // Importing axios for making HTTP requests
 import { useNavigate } from 'react-router-dom';
 import { ThemeContext } from '../../Theme/ThemeContext';
-import './Login_Screen.css'; 
+import './Login_Screen.css';
 
 // Login component
 function Login() {
@@ -52,29 +52,41 @@ function Login() {
 
   // Rendering form
   return (
-      <div className={`login ${darkMode ? 'dark-mode' : ''}`}>
-        <Form onSubmit={handleSubmit}> {/* Form submission handled by handleSubmit function */}
-          <Form.Group>
-            <Form.Label>Username</Form.Label>
-            <Form.Control type="text" value={username} onChange={e => setUsername(e.target.value)} placeholder="Enter username" /> {/* Input field for username */}
+    <div className={`min-h-screen flex items-center justify-center bg-zinc-100 dark:bg-zinc-900 ${darkMode ? 'dark-mode' : ''}`}>
+      <Form className="login-form" onSubmit={handleSubmit}>
+        <div className="left">
+          <div className="flex items-center mb-6">
+            <h1 className="text-2xl font-semibold">Sign in</h1>
+          </div>
+          <p className="text-zinc">to continue to MeaTube</p>
+        </div>
+        <div className="right">
+          <Form.Group className="mb-4">
+            <Form.Label className="block text-sm font-medium text-zinc">Username</Form.Label>
+            <Form.Control type="text" value={username} onChange={e => setUsername(e.target.value)} className="input-field" placeholder="Enter username" />
           </Form.Group>
 
-          <Form.Group>
-            <Form.Label>Password</Form.Label>
-            <Form.Control type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" /> {/* Input field for password */}
+          <Form.Group className="mb-4">
+            <Form.Label className="block text-sm font-medium text-zinc">Password</Form.Label>
+            <Form.Control type="password" value={password} onChange={e => setPassword(e.target.value)} className="input-field" placeholder="Password" />
           </Form.Group>
 
-          <Button variant="primary" type="submit"> {/* login button */}
-            Login
-          </Button>
+          <div className="flex justify-between items-center mb-4">
+            <a href="#" className="text-blue" onClick={(e) => { e.preventDefault(); alert("Not implemented this page yet"); }}>Forgot password?</a>
+          </div>
 
-          <Button variant="primary" onClick={() => navigate('/Registration')}> {/* Navigate to register page when button is clicked */}
-            Register
-          </Button>
+          <p className="text-sm text-zinc mb-4" onClick={(e) => { e.preventDefault(); alert("Not implemented this page yet"); }}>Not your computer? Use Guest mode to sign in privately. <a href="#" className="text-blue">Learn more about using Guest mode</a></p>
 
-        </Form>
-      </div>
+          <div className="flex justify-end ">
+            <Button variant="primary" onClick={() => navigate('/Registration')} className="text-blue-btn">Create account</Button>
+            <Button variant="primary" type="submit" className="submit-button">Login</Button>
+          </div>
+        </div>
+      </Form>
+    </div>
   );
 }
 
 export default Login; // Exporting Login component
+
+

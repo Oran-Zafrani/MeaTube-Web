@@ -1,3 +1,106 @@
 .login {
     margin-top: 75px;
 }
+
+.min-h-screen {
+    min-height: 100vh;
+    font-size: 1.2em;
+}
+
+.flex {
+    display: flex;
+    justify-content: flex-start; /* Align items to the start */
+}
+
+.flex.justify-end {
+    justify-content: flex-end;
+}
+
+.text-blue-btn,
+.submit-button {
+    margin: 0;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.bg-zinc-100 {
+    background-color: #F7FAFC;
+}
+
+.dark .bg-zinc-900 {
+    background-color: #1A202C;
+}
+
+.login-form {
+    background-color: #fff;
+    padding: 3rem;
+    /* Increase the padding */
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    max-width: 60rem;
+    /* Increase the maximum width */
+    width: 100%;
+    display: flex;
+    /* Add this to make the form a flex container */
+}
+
+.login-form .left {
+    flex: 1;
+    /* Add this to make the left side take up half the width */
+}
+
+.login-form .right {
+    flex: 1;
+    /* Add this to make the right side take up half the width */
+}
+
+.text-2xl {
+    font-size: 3rem;
+}
+
+.font-semibold {
+    font-weight: 600;
+}
+
+.text-zinc {
+    color: #718096;
+}
+
+.input-field {
+    margin-top: 0.25rem;
+    display: block;
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid #CBD5E0;
+    border-radius: 0.25rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    outline: none;
+}
+
+.text-blue {
+    color: #3182CE;
+}
+
+.text-blue-btn {
+    background-color: #f8f8f8;
+    color: #3182CE;
+    padding: 0.6rem 1.3rem;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+.submit-button {
+    background-color: #3182CE;
+    color: #fff;
+    padding: 0.6rem 1.3rem;
+    border-radius: 0.25rem;
+    font-size: 1.1rem;
+    
+}
