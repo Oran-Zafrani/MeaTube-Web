@@ -15,6 +15,7 @@ function AddMovie() {
     const [loggedInUser, setLoggedInUser] = useState(null);
     const [previewImage, setPreviewImage] = useState(null);
     const [videoFile, setVideoFile] = useState(null);
+    const [category, setCategory] = useState('');
 
     // We want to make sure that the user get the massage just one time becasue react is render the page multiple times
     let check_for_first_time_logedin = true;
@@ -37,7 +38,7 @@ function AddMovie() {
     const handleSubmit = (event) => {
         event.preventDefault();
         // Check if all fields are filled
-        if (!title || !description || !videoFile || !previewImage) {
+        if (!title || !description || !videoFile || !previewImage || !category) {
             alert('Please fill all fields before submitting.');
             return;
         }
@@ -51,6 +52,7 @@ function AddMovie() {
             "id": videos.length + 1,
             "title": title,
             "description": description,
+            "category": category,
             "videoFile": videoFile,
             "previewImage": previewImage,
             "channel": loggedInUser,
@@ -90,6 +92,11 @@ function AddMovie() {
                 <Form.Group>
                     <Form.Label>Movie Description</Form.Label>
                     <Form.Control type="text" placeholder="Enter movie description" value={description} onChange={(e) => setDescription(e.target.value)} />
+                </Form.Group>
+
+                <Form.Group>
+                    <Form.Label>Category</Form.Label>
+                    <Form.Control type="text" placeholder="Enter category" value={category} onChange={(e) => setCategory(e.target.value)} />
                 </Form.Group>
 
                 <Form.Group>
