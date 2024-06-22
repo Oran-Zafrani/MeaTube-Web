@@ -3,6 +3,7 @@ import './App.css';
 import React, { useState, useEffect  } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './Theme/ThemeProvider';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 // Importing the pages
 import Main from './Pages/Main/Main';

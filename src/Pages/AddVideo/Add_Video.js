@@ -35,6 +35,33 @@ function AddMovie() {
     }, [navigate]);
 
 
+    const handleVideoChange = (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+
+        // reader.onload = () => {
+        //     setVideoFile(reader.result);
+        //   };
+      setVideoFile("mock video file");
+        //   if (file) {
+        //     reader.readAsDataURL(file);
+        //   }
+      };
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = () => {
+            setPreviewImage(reader.result);
+          };
+
+          if (file) {
+            reader.readAsDataURL(file);
+          }
+    };
+
+
     const handleSubmit = (event) => {
         event.preventDefault();
         // Check if all fields are filled
@@ -104,11 +131,11 @@ function AddMovie() {
                     </Form.Group>
                     <Form.Group className="mb-4">
                         <Form.Label className="block text-sm font-medium text-zinc">Upload Video</Form.Label>
-                        <Form.Control type="file" accept="video/*" onChange={(e) => setVideoFile(e.target.files[0])} className="input-field" />
+                        <Form.Control type="file" accept="video/*" onChange={handleVideoChange} className="input-field" />
                     </Form.Group>
                     <Form.Group className="mb-4">
                         <Form.Label className="block text-sm font-medium text-zinc">Preview Image</Form.Label>
-                        <Form.Control type="file" accept="image/*" onChange={(e) => setPreviewImage(e.target.files[0])} className="input-field" />
+                        <Form.Control type="file" accept="image/*" onChange={handleImageChange} className="input-field" />
                     </Form.Group>
                     <div className="flex justify-end">
                         <Button variant="primary" type="submit" className="submit-button">Add Movie</Button>

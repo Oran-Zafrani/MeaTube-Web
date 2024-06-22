@@ -15,8 +15,17 @@ function Registration() {
   const navigate = useNavigate();
 
   const handleImageChange = (e) => {
-    setImage(URL.createObjectURL(e.target.files[0]));
-  };
+    const file = e.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = () => {
+        setImage(reader.result);
+      };
+  
+      if (file) {
+        reader.readAsDataURL(file);
+      }
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
