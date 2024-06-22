@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import logo from '../../assets/images/meatube logo with text.png';
+import logo from '../../assets/images/meatube_logo_with_text.png';
 import profilePic from '../../assets/images/guest_image.png';
 import './Navbar.css';
 import { useNavigate, BrowserRouter as Router, Routes, Route } from 'react-router-dom';
