@@ -11,6 +11,7 @@ function PlayVideo() {
     const { videoId } = useParams();
     const [video, setVideo] = useState(null); // Add a new state variable for the video object
     const [subscriberCount, setSubscriberCount] = useState('Loading...');
+    const [userImage, setUserImage] = useState('defaultImagePath.jpg');
 
     useEffect(() => {
         async function fetchVideo() {
@@ -35,20 +36,20 @@ function PlayVideo() {
                 console.error('Failed to fetch video:', error);
             }
         }
-    
-        async function fetchSubscriberCount(channel) {
-            console.log('fetchSubscriberCount called with channel:', channel); // Log the input
+
+        async function fetchUserData(channel) {
             try {
                 const db = await openDB('MeaTubeDB', 1);
-                console.log('Database opened:', db); // Log after opening the database
-                if (!db.objectStoreNames.contains('users')) { // Corrected from '["users"]' to 'users'
+                // Check if the 'users' object store exists
+                if (!db.objectStoreNames.contains('users')) {
                     throw new Error("Object store 'users' does not exist.");
                 }
                 const transaction = db.transaction(["users"], "readonly");
                 const objectStore = transaction.objectStore("users");
                 const channelData = await objectStore.get(channel);
                 console.log('Channel data fetched:', channelData); // Log the fetched channel data
-    
+
+                // Check if the channel data contains a subscriber count and set the state variable
                 if (channelData && Number.isInteger(channelData.subscribers)) {
                     console.log('Setting subscriber count:', `${channelData.subscribers} subscribers`); // Log before setting subscriber count
                     setSubscriberCount(`${channelData.subscribers} subscribers`);
@@ -56,15 +57,25 @@ function PlayVideo() {
                     console.log('No subscribers data found for channel:', channel); // Log when no data found
                     setSubscriberCount('No subscribers data');
                 }
+
+                // Check if the channel data contains an image URL and set the state variable
+                if (channelData && channelData.image) {
+                    setUserImage(channelData.image);
+                } else {
+                    console.log('No user data found for channel:', channel);
+                    setUserImage('defaultImagePath.jpg'); // Fallback image path
+                }
+
+
             } catch (error) {
                 console.error('Failed to fetch subscriber count:', error);
                 setSubscriberCount('Failed to load data');
             }
         }
-    
+
         fetchVideo().then(() => {
             if (video && video.channel) {
-                fetchSubscriberCount(video.channel);
+                fetchUserData(video.channel);
             }
         });
     }, [videoId, video?.channel]);
@@ -87,7 +98,7 @@ function PlayVideo() {
                     </div>
                     <hr />
                     <div className='publisher'>
-                        <img src='https://via.placeholder.com/50' alt='publisher' />
+                        <img src={userImage} alt='publisher' />
                         <div>
                             <p>{video.channel}</p>
                             {/** need a think how to do that!!! */}
