@@ -58,3 +58,11 @@ nav{
 .bi-upload{
     cursor: pointer;
 }
+
+.nav-right .profile{
+    width: 35px;
+    height: 35px; /* Ensures the height is equal to the width for a perfect circle */
+    margin-right: 25px;
+    border-radius: 50%; /* Makes the image circular */
+    object-fit: cover; /* Ensures the image covers the area without stretching */
+}

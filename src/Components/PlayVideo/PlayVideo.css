@@ -54,8 +54,10 @@
 }
 
 .publisher img{
-    width: 40px;
-    border-radius: 50%;
+    width: 50px; 
+    height: 50px; 
+    border-radius: 50%; 
+    object-fit: cover; 
     margin-right: 15px;
 }
 
@@ -106,7 +108,9 @@
 
 .comment img{
     width: 35px;
-    border-radius: 50%;
+    height: 35px; /* Ensures the height is equal to the width for a perfect circle */
+    border-radius: 50%; /* Makes the image circular */
+    object-fit: cover; /* Ensures the image covers the area without stretching */
     margin-right: 15px;
 }
 
