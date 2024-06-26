@@ -1,6 +1,5 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Button, Form } from 'react-bootstrap';
-import axios from 'axios';
 import { ThemeContext } from '../../Theme/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 import './Registration.css';
@@ -11,60 +10,93 @@ function Registration() {
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [image, setImage] = useState(null);
-  const { darkMode, toggleTheme } = useContext(ThemeContext);
+  const { darkMode } = useContext(ThemeContext);
   const navigate = useNavigate();
+
+  // Initialize IndexedDB
+  useEffect(() => {
+    if (!window.indexedDB) {
+      alert("Your browser doesn't support a stable version of IndexedDB. Some features will not be available.");
+    } else {
+      const request = window.indexedDB.open("MeaTubeDB", 1);
+
+      request.onerror = (event) => {
+        console.error("Database error: ", event.target.errorCode);
+      };
+
+      request.onupgradeneeded = (event) => {
+        const db = event.target.result;
+        const objectStore = db.createObjectStore("users", { keyPath: "username" });
+        objectStore.createIndex("username", "username", { unique: true });
+      };
+    }
+  }, []);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
-
     reader.onload = () => {
-        setImage(reader.result);
-      };
-  
-      if (file) {
-        reader.readAsDataURL(file);
-      }
-};
+      setImage(reader.result);
+    };
+
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Check if all fields are filled out
     if (!username || !password || !passwordConfirmation || !displayName || !image) {
       alert("All fields must be filled out!");
       return;
     }
 
-    // Check if password and password confirmation match
     if (password !== passwordConfirmation) {
       alert("Passwords do not match!");
       return;
     }
 
-    // Check if user already exists
-    if (localStorage.getItem(username)) {
-      alert("User already exists!");
-      return;
-    }
-
-    // Check if password is at least 8 characters long and contains both letters and numbers
     if (password.length < 8 || !/\d/.test(password) || !/[a-zA-Z]/.test(password)) {
       alert("Password must be at least 8 characters long and contain both letters and numbers!");
       return;
     }
 
-    // Include display name and image URL in data object
-    const data = { username, password, displayName, image };
+    const dbRequest = window.indexedDB.open("MeaTubeDB");
 
-    // Store user's data in local storage
-    localStorage.setItem(username, JSON.stringify(data));
+    dbRequest.onsuccess = (event) => {
+      const db = event.target.result;
+      const transaction = db.transaction(["users"], "readwrite");
+      const objectStore = transaction.objectStore("users");
 
-    alert('User registered successfully');
+      const getRequest = objectStore.get(username);
 
-    // Navigate to login page
-    navigate('/Login');
+      getRequest.onsuccess = () => {
+        if (getRequest.result) {
+          alert("User already exists!");
+        } else {
+          const data = { username, password, displayName, image, subscribers: 0 };
+          const addRequest = objectStore.add(data);
 
+          addRequest.onsuccess = () => {
+            alert('User registered successfully');
+            navigate('/Login');
+          };
+
+          addRequest.onerror = (event) => {
+            console.error("Error adding data: ", event.target.error);
+          };
+        }
+      };
+
+      getRequest.onerror = (event) => {
+        console.error("Error reading data: ", event.target.error);
+      };
+    };
+
+    dbRequest.onerror = (event) => {
+      console.error("Error opening database: ", event.target.errorCode);
+    };
   };
 
   return (

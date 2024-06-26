@@ -38,6 +38,19 @@ function PlayVideo() {
         fetchVideo();
     }, [videoId]);
 
+    // Add a subscriber count variable
+    let subscriberCount = 'Loading...'; // Default text while loading
+
+    if (video && video.channel) {
+        const channelDataString = localStorage.getItem(video.channel);
+        if (channelDataString) {
+            const channelData = JSON.parse(channelDataString);
+            subscriberCount = `${channelData.subscribers} subscribers`;
+        } else {
+            subscriberCount = 'No subscribers data';
+        }
+    }
+
     return (
         <div className='play-video'>
             {videoSrc && <video src={videoSrc} controls autoPlay muted></video>}
@@ -60,7 +73,7 @@ function PlayVideo() {
                         <div>
                             <p>{video.channel}</p>
                             {/** need a think how to do that!!! */}
-                            <span>2M subscribers</span>
+                            <span>{subscriberCount} subscribers</span>
                         </div>
                         <button>Subscribe</button>
                     </div>
