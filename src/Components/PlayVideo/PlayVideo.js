@@ -1,79 +1,114 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { openDB } from 'idb';
 import './PlayVideo.css';
-import video from '../../assets/videos/who_does_plant.mp4';
-// Import any necessary modules or dependencies here
+import { parseUploadTime } from '../../Components/Feed/VideoCard';
+
 
 // Define your component or function here
 function PlayVideo() {
-    // Add your code here
+    const [videoSrc, setVideoSrc] = useState('');
+    const { videoId } = useParams();
+    const [video, setVideo] = useState(null); // Add a new state variable for the video object
+
+    useEffect(() => {
+        async function fetchVideo() {
+            try {
+                console.log('Fetching video for ID:', videoId);
+                const db = await openDB('meatubeDB', 1);
+                const tx = db.transaction('videos', 'readonly');
+                const store = tx.objectStore('videos');
+                const allVideos = await store.getAll();
+                console.log(videoId); // Check the videoId value and type
+                console.log(allVideos); // Inspect the allVideos array
+                const video = allVideos.find(v => v.id === Number(videoId));
+                console.log(video); // Check if the video was found
+                if (video && video.videoFile) {
+                    console.log('Video URL found:', video.videoFile);
+                    setVideoSrc(video.videoFile);
+                    setVideo(video); // Update the video state variable
+                } else {
+                    console.log('No video found or video has no URL');
+                }
+            } catch (error) {
+                console.error('Failed to fetch video:', error);
+            }
+        }
+
+        fetchVideo();
+    }, [videoId]);
+
     return (
         <div className='play-video'>
-            <video src={video} controls autoPlay muted></video>
-            <h3>Oran Plays CS:GO</h3>
-            <div className='play-video-info'>
-                <p>1.2k views &bull; 2 days ago</p>
-                <div>
-                    <span><i class="bi bi-hand-thumbs-up-fill"></i> 254</span>
-                    <span><i class="bi bi-hand-thumbs-down-fill"></i> 31</span>
-                    <span><i class="bi bi-share-fill"></i> Share</span>
-                </div>
-            </div>
-            <hr />
-            <div className='publisher'>
-                <img src='https://via.placeholder.com/50' alt='publisher' />
-                <div>
-                    <p>Oran Zafrani</p>
-                    <span>2M subsribers</span>
-                </div>
-                <button>Subscribe</button>
-            </div>
-            <div className='vid-description'>
-                <p>video of oran playin cs:go</p>
-                <hr />
-                <h4>130 Comments</h4>
+            {videoSrc && <video src={videoSrc} controls autoPlay muted></video>}
+            {!videoSrc && <p>Loading video...</p>}
 
-
-
-
-
-                //components for comment
-                <div className='comment'>
-                    <img src='https://via.placeholder.com/50' alt='commenter' />
-                    <div>
-                        <h3>John Doe <span>1 day ago</span></h3>
-                        <p>It looks fun!!</p>
-                        <div className='comment-action'>
-                            <i class="bi bi-hand-thumbs-up-fill"></i>
-                            <span>15</span>
-                            <i class="bi bi-hand-thumbs-down-fill"></i>
+            {video ? (
+                <>
+                    <h3>{video.title}</h3>
+                    <div className='play-video-info'>
+                        <p>{video.views} views &bull; {parseUploadTime(video.uploadTime)}</p>
+                        <div>
+                            <span><i className="bi bi-hand-thumbs-up-fill"></i> {video.likes}</span>
+                            <span><i className="bi bi-hand-thumbs-down-fill"></i> {video.dislikes}</span>
+                            <span><i className="bi bi-share-fill"></i> Share</span>
                         </div>
                     </div>
-                </div>
-                <div className='comment'>
-                    <img src='https://via.placeholder.com/50' alt='commenter' />
-                    <div>
-                        <h3>John Cena <span>1 day ago</span></h3>
-                        <p>Awesome!!</p>
-                        <div className='comment-action'>
-                            <i class="bi bi-hand-thumbs-up-fill"></i>
-                            <span>495</span>
-                            <i class="bi bi-hand-thumbs-down-fill"></i>
+                    <hr />
+                    <div className='publisher'>
+                        <img src='https://via.placeholder.com/50' alt='publisher' />
+                        <div>
+                            <p>{video.channel}</p>
+                            {/** need a think how to do that!!! */}
+                            <span>2M subscribers</span>
+                        </div>
+                        <button>Subscribe</button>
+                    </div>
+                    <div className='vid-description'>
+                        <p>{video.description}</p>
+                        <hr />
+                        <h4>{video.comments} Comments</h4>
+                    </div>
+                    <div className='comment'>
+                        <img src='https://via.placeholder.com/50' alt='commenter' />
+                        <div>
+                            <h3>John Doe <span>1 day ago</span></h3>
+                            <p>It looks fun!!</p>
+                            <div className='comment-action'>
+                                <i className="bi bi-hand-thumbs-up-fill"></i>
+                                <span>15</span>
+                                <i className="bi bi-hand-thumbs-down-fill"></i>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div className='comment'>
-                    <img src='https://via.placeholder.com/50' alt='commenter' />
-                    <div>
-                        <h3>John wick <span>1 day ago</span></h3>
-                        <p>Call me in the next time!!</p>
-                        <div className='comment-action'>
-                            <i class="bi bi-hand-thumbs-up-fill"></i>
-                            <span>45</span>
-                            <i class="bi bi-hand-thumbs-down-fill"></i>
+                    <div className='comment'>
+                        <img src='https://via.placeholder.com/50' alt='commenter' />
+                        <div>
+                            <h3>John Cena <span>1 day ago</span></h3>
+                            <p>Awesome!!</p>
+                            <div className='comment-action'>
+                                <i className="bi bi-hand-thumbs-up-fill"></i>
+                                <span>495</span>
+                                <i className="bi bi-hand-thumbs-down-fill"></i>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                    <div className='comment'>
+                        <img src='https://via.placeholder.com/50' alt='commenter' />
+                        <div>
+                            <h3>John Wick <span>1 day ago</span></h3>
+                            <p>Call me in the next time!!</p>
+                            <div className='comment-action'>
+                                <i className="bi bi-hand-thumbs-up-fill"></i>
+                                <span>45</span>
+                                <i className="bi bi-hand-thumbs-down-fill"></i>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            ) : (
+                <p>Video information is loading...</p>
+            )}
         </div>
     );
 }

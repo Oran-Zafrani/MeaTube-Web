@@ -47,8 +47,13 @@ function AddMovie() {
 
     const handleVideoChange = (e) => {
         const file = e.target.files[0];
-        const reader = new FileReader();
-      setVideoFile("mock video file");
+        if (file) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setVideoFile(reader.result);
+          };
+          reader.readAsDataURL(file);
+        }
       };
 
     const handleImageChange = (e) => {

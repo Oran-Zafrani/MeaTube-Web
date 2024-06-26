@@ -25,7 +25,7 @@ function formatViews(views) {
 
 
 // Define a function to parse the upload time: TIME FORMAT IS ISO 8601
-function parseUploadTime(dateTime) {
+export function parseUploadTime(dateTime) {
     const uploadDate = new Date(dateTime);
     const currentDate = new Date();
   
