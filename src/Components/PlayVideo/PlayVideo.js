@@ -35,17 +35,25 @@ function PlayVideo() {
                 console.error('Failed to fetch video:', error);
             }
         }
-
-        // Fetch user information from the IndexedDB
-        async function fetchSubscriberCount(channel) { 
+    
+        async function fetchSubscriberCount(channel) {
+            console.log('fetchSubscriberCount called with channel:', channel); // Log the input
             try {
-                const db = await openDB('meatubeDB', 1);
-                const tx = db.transaction('channels', 'readonly');
-                const store = tx.objectStore('channels');
-                const channelData = await store.get(channel);
-                if (channelData && channelData.subscribers) {
-                    setSubscriberCount(`${channelData.subscribers} subscribers`); // Step 4: Update state
+                const db = await openDB('MeaTubeDB', 1);
+                console.log('Database opened:', db); // Log after opening the database
+                if (!db.objectStoreNames.contains('users')) { // Corrected from '["users"]' to 'users'
+                    throw new Error("Object store 'users' does not exist.");
+                }
+                const transaction = db.transaction(["users"], "readonly");
+                const objectStore = transaction.objectStore("users");
+                const channelData = await objectStore.get(channel);
+                console.log('Channel data fetched:', channelData); // Log the fetched channel data
+    
+                if (channelData && Number.isInteger(channelData.subscribers)) {
+                    console.log('Setting subscriber count:', `${channelData.subscribers} subscribers`); // Log before setting subscriber count
+                    setSubscriberCount(`${channelData.subscribers} subscribers`);
                 } else {
+                    console.log('No subscribers data found for channel:', channel); // Log when no data found
                     setSubscriberCount('No subscribers data');
                 }
             } catch (error) {
@@ -53,11 +61,12 @@ function PlayVideo() {
                 setSubscriberCount('Failed to load data');
             }
         }
-
-        fetchVideo();
-        if (video && video.channel) {
-            fetchSubscriberCount(video.channel); 
-        }
+    
+        fetchVideo().then(() => {
+            if (video && video.channel) {
+                fetchSubscriberCount(video.channel);
+            }
+        });
     }, [videoId, video?.channel]);
 
     return (
@@ -82,7 +91,7 @@ function PlayVideo() {
                         <div>
                             <p>{video.channel}</p>
                             {/** need a think how to do that!!! */}
-                            <span>{subscriberCount} subscribers</span>
+                            <span>{subscriberCount} </span>
                         </div>
                         <button>Subscribe</button>
                     </div>
