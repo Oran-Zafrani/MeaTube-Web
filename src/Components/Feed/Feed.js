@@ -1,24 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './Feed.css';
 import FeedJson from '../../../src/assets/jsons/Feed.json';
 import VideoCard from './VideoCard';
-// Import any necessary modules or components
+import { openDB } from 'idb';
 
-let videos = JSON.parse(localStorage.getItem('videos')) || [];
-
-const VideoList = videos.map((video, key) => {
-    return <VideoCard key={key} vidCard={video} />;});
-
-
-// Define your component or function
 function Feed() {
-    // Add your code here
-    return (
-        
-        <div className='feed'>
-            {VideoList}     
-        </div>
-    );
+  const [videos, setVideos] = useState([]);
+
+  useEffect(() => {
+    async function fetchVideos() {
+      const db = await openDB('meatubeDB', 1);
+      const tx = db.transaction('videos', 'readonly');
+      const store = tx.objectStore('videos');
+      const allVideos = await store.getAll();
+      setVideos(allVideos);
+    }
+
+    fetchVideos();
+  }, []);
+
+  return (
+    <div className='feed'>
+      {videos.map((video, key) => (
+        <VideoCard key={key} vidCard={video} />
+      ))}
+    </div>
+  );
 }
 
 export default Feed;

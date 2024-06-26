@@ -2,7 +2,17 @@ import React, { useState, useContext, useEffect, useRef } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { ThemeContext } from '../../Theme/ThemeContext';
 import { useNavigate } from 'react-router-dom';
+import { openDB } from 'idb';
 import './Add_Video.css';
+
+// IndexedDB helper functions
+const dbPromise = openDB('meatubeDB', 1, {
+    upgrade(db) {
+      if (!db.objectStoreNames.contains('videos')) {
+        db.createObjectStore('videos', { keyPath: 'id', autoIncrement: true });
+      }
+    },
+  });
 
 function AddMovie() {
     const { darkMode } = useContext(ThemeContext);
@@ -38,14 +48,7 @@ function AddMovie() {
     const handleVideoChange = (e) => {
         const file = e.target.files[0];
         const reader = new FileReader();
-
-        // reader.onload = () => {
-        //     setVideoFile(reader.result);
-        //   };
       setVideoFile("mock video file");
-        //   if (file) {
-        //     reader.readAsDataURL(file);
-        //   }
       };
 
     const handleImageChange = (e) => {
@@ -62,52 +65,47 @@ function AddMovie() {
     };
 
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        // Check if all fields are filled
         if (!title || !description || !videoFile || !previewImage || !category) {
-            alert('Please fill all fields before submitting.');
-            return;
+          alert('Please fill all fields before submitting.');
+          return;
         }
-
-        // Get the current videos array from localStorage. If there are no videos, create an empty array
-        let videos = JSON.parse(localStorage.getItem('videos')) || [];
-
-        // Create a new video object
+    
         let newVideo = {
-            // If there are no videos, set the videoId to 1. Otherwise, set it to the length of the videos array + 1
-            "id": videos.length + 1,
-            "title": title,
-            "description": description,
-            "category": category,
-            "videoFile": videoFile,
-            "previewImage": previewImage,
-            "channel": loggedInUser,
-            "uploadTime": new Date().toISOString(),
-            "views": 0,
-            "likes": 0,
-            "dislikes": 0,
-            "comments": 0,
-            "commentsLink": []
+          title,
+          description,
+          category,
+          videoFile,
+          previewImage,
+          channel: loggedInUser,
+          uploadTime: new Date().toISOString(),
+          views: 0,
+          likes: 0,
+          dislikes: 0,
+          comments: 0,
+          commentsLink: [],
         };
-
-        // Add the new video to the videos array
-        videos.push(newVideo);
-
-        // Save the updated videos array back to localStorage
-        localStorage.setItem('videos', JSON.stringify(videos));
-
-        // Alert the user that the video was saved successfully
-        alert('Video saved successfully!');
-        formRef.current.reset();
-
-        // Clear the form fields
-        setTitle('');
-        setDescription('');
-        setVideoFile(null);
-        setPreviewImage(null);
-        setCategory('');
-    };
+    
+        console.log('newVideo:', newVideo);
+    
+        try {
+          const db = await dbPromise;
+          const tx = db.transaction('videos', 'readwrite');
+          const store = tx.objectStore('videos');
+          await store.add(newVideo);
+          await tx.complete;
+          alert('Video saved successfully!');
+          formRef.current.reset();
+          setTitle('');
+          setDescription('');
+          setVideoFile(null);
+          setPreviewImage(null);
+          setCategory('');
+        } catch (error) {
+          console.error('Could not save the video to IndexedDB:', error);
+        }
+      };
 
     return (
         <div className={`min-h-screen flex items-center justify-center bg-zinc-100 dark:bg-zinc-900 ${darkMode ? 'dark-mode' : ''}`}>
