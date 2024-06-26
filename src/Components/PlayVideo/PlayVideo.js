@@ -10,6 +10,7 @@ function PlayVideo() {
     const [videoSrc, setVideoSrc] = useState('');
     const { videoId } = useParams();
     const [video, setVideo] = useState(null); // Add a new state variable for the video object
+    const [subscriberCount, setSubscriberCount] = useState('Loading...');
 
     useEffect(() => {
         async function fetchVideo() {
@@ -35,21 +36,29 @@ function PlayVideo() {
             }
         }
 
-        fetchVideo();
-    }, [videoId]);
-
-    // Add a subscriber count variable
-    let subscriberCount = 'Loading...'; // Default text while loading
-
-    if (video && video.channel) {
-        const channelDataString = localStorage.getItem(video.channel);
-        if (channelDataString) {
-            const channelData = JSON.parse(channelDataString);
-            subscriberCount = `${channelData.subscribers} subscribers`;
-        } else {
-            subscriberCount = 'No subscribers data';
+        // Fetch user information from the IndexedDB
+        async function fetchSubscriberCount(channel) { 
+            try {
+                const db = await openDB('meatubeDB', 1);
+                const tx = db.transaction('channels', 'readonly');
+                const store = tx.objectStore('channels');
+                const channelData = await store.get(channel);
+                if (channelData && channelData.subscribers) {
+                    setSubscriberCount(`${channelData.subscribers} subscribers`); // Step 4: Update state
+                } else {
+                    setSubscriberCount('No subscribers data');
+                }
+            } catch (error) {
+                console.error('Failed to fetch subscriber count:', error);
+                setSubscriberCount('Failed to load data');
+            }
         }
-    }
+
+        fetchVideo();
+        if (video && video.channel) {
+            fetchSubscriberCount(video.channel); 
+        }
+    }, [videoId, video?.channel]);
 
     return (
         <div className='play-video'>
