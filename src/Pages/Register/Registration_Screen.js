@@ -75,7 +75,7 @@ function Registration() {
         if (getRequest.result) {
           alert("User already exists!");
         } else {
-          const data = { username, password, displayName, image, subscribers: 0 };
+          const data = { username, password, displayName, image, subscribers: 0, likedVideos: [], dislikedVideos: [] };
           const addRequest = objectStore.add(data);
 
           addRequest.onsuccess = () => {

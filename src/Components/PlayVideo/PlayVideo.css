@@ -143,3 +143,11 @@
     margin-right: 15px;
     color: #5a5a5a;
 }
+
+.like-selected {
+    color: blue;
+}
+
+.dislike-selected {
+    color: red;
+}
