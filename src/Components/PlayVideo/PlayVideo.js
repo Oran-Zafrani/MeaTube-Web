@@ -15,7 +15,6 @@ function PlayVideo() {
     const [userInteraction, setUserInteraction] = useState(0); // 0: none, 1: like, 2: dislike
     const NONE = 0, LIKE = 1, DISLIKE = 2;
 
-
     useEffect(() => {
         async function fetchVideo() {
             try {
@@ -28,7 +27,17 @@ function PlayVideo() {
                 console.log("video info: ", video); // Check if the video was found
                 if (video && video.videoFile) {
                     setVideoSrc(video.videoFile);
-                    setVideo(video); // Update the video state variable
+                    // Update the video state variable
+                    setVideo(video); 
+                    
+                    // Increment the view count
+                    video.views = (video.views || 0) + 1;
+    
+                    // Update the video in the database
+                    const updateTx = db.transaction('videos', 'readwrite');
+                    const updateStore = updateTx.objectStore('videos');
+                    await updateStore.put(video); // Assuming 'id' is your keyPath
+                    await updateTx.complete;
                 } else {
                     console.log('No video found or video has no URL');
                 }
@@ -36,7 +45,7 @@ function PlayVideo() {
                 console.error('Failed to fetch video:', error);
             }
         }
-
+    
         async function fetchUploadedUserData(channel) {
             try {
                 const db = await openDB('MeaTubeDB', 1);
@@ -47,13 +56,13 @@ function PlayVideo() {
                 const objectStore = transaction.objectStore("users");
                 const channelData = await objectStore.get(channel);
                 console.log('Channel data fetched:', channelData);
-
+    
                 if (channelData && Number.isInteger(channelData.subscribers)) {
                     setSubscriberCount(`${channelData.subscribers} subscribers`);
                 } else {
                     setSubscriberCount('No subscribers data');
                 }
-
+    
                 if (channelData && channelData.image) {
                     setUserImage(channelData.image);
                 } else {
@@ -64,7 +73,7 @@ function PlayVideo() {
                 setSubscriberCount('Failed to load data');
             }
         }
-
+    
         async function fetchLogedInUserData() {
             const loggedInUser = localStorage.getItem('loggedInUser');
             if (!(loggedInUser === 'null')) {
@@ -89,7 +98,7 @@ function PlayVideo() {
                 }
             }
         }
-
+    
         async function fetchData() {
             await fetchVideo();
             if (video && video.channel) {
@@ -97,9 +106,10 @@ function PlayVideo() {
                 await fetchLogedInUserData();
             }
         }
-
+    
         fetchData();
-    }, [videoId, video?.channel]);
+    // The empty dependency array ensures this effect runs only once after the initial render
+    }, []);
 
     const handleLike = async () => {
         const loggedInUser = localStorage.getItem('loggedInUser');
@@ -161,7 +171,7 @@ function PlayVideo() {
         if (video) {
             isLike ? video.likes++ : video.likes--;
             await store.put(video); // Update the video record in the database.
-            
+
         }
         await tx.done; // Close the transaction.
     };
