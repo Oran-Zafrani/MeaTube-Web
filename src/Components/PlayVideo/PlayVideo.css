@@ -151,3 +151,44 @@
 .dislike-selected {
     color: red;
 }
+.add-comment-container {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px; /* Adds space below the container */
+}
+
+.add-comment-container > div {
+    display: flex;
+    flex-grow: 1;
+    align-items: center; /* Align the input and button with the image */
+}
+
+.add-comment-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-right: 10px; /* Adjust spacing between input and button */
+}
+
+.add-comment-button {
+    padding: 10px 20px;
+    background-color: #626466;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.add-comment-button:hover {
+    background-color: #0056b3;
+}
+.add-comment-container img {
+    width: 50px; /* Set the width of the image */
+    height: 50px; /* Set the height of the image to the same as the width */
+    border-radius: 50%; /* This makes the image a perfect circle */
+    margin-right: 10px; /* Space between image and the input field */
+}

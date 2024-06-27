@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { openDB } from 'idb';
 import './PlayVideo.css';
 import { parseUploadTime } from '../../Components/Feed/VideoCard';
+import defaultImage from '../../assets/images/guest_image.png';
 
 
 // Define your component or function here
@@ -11,9 +12,11 @@ function PlayVideo() {
     const { videoId } = useParams();
     const [video, setVideo] = useState(null); // Add a new state variable for the video object
     const [subscriberCount, setSubscriberCount] = useState('Loading...');
-    const [userImage, setUserImage] = useState('defaultImagePath.jpg');
-    const [userInteraction, setUserInteraction] = useState(0); // 0: none, 1: like, 2: dislike
+    const [uploadedUserImage, setUserImage] = useState('defaultImagePath.jpg');
+    const [userInteraction, setUserInteraction] = useState(0); 
+    // Define constants for user interactions
     const NONE = 0, LIKE = 1, DISLIKE = 2;
+    const [logedinUserImage, setlogedinUserImage] = useState(defaultImage);
 
     useEffect(() => {
         async function fetchVideo() {
@@ -28,11 +31,11 @@ function PlayVideo() {
                 if (video && video.videoFile) {
                     setVideoSrc(video.videoFile);
                     // Update the video state variable
-                    setVideo(video); 
-                    
+                    setVideo(video);
+
                     // Increment the view count
                     video.views = (video.views || 0) + 1;
-    
+
                     // Update the video in the database
                     const updateTx = db.transaction('videos', 'readwrite');
                     const updateStore = updateTx.objectStore('videos');
@@ -45,7 +48,7 @@ function PlayVideo() {
                 console.error('Failed to fetch video:', error);
             }
         }
-    
+
         async function fetchUploadedUserData(channel) {
             try {
                 const db = await openDB('MeaTubeDB', 1);
@@ -56,13 +59,13 @@ function PlayVideo() {
                 const objectStore = transaction.objectStore("users");
                 const channelData = await objectStore.get(channel);
                 console.log('Channel data fetched:', channelData);
-    
+
                 if (channelData && Number.isInteger(channelData.subscribers)) {
                     setSubscriberCount(`${channelData.subscribers} subscribers`);
                 } else {
                     setSubscriberCount('No subscribers data');
                 }
-    
+
                 if (channelData && channelData.image) {
                     setUserImage(channelData.image);
                 } else {
@@ -73,7 +76,7 @@ function PlayVideo() {
                 setSubscriberCount('Failed to load data');
             }
         }
-    
+
         async function fetchLogedInUserData() {
             const loggedInUser = localStorage.getItem('loggedInUser');
             if (!(loggedInUser === 'null')) {
@@ -96,9 +99,12 @@ function PlayVideo() {
                     console.log('Logged in user has no interaction with the video');
                     setUserInteraction(NONE);
                 }
+                if (logedinUserdata && logedinUserdata.image) {
+                    setlogedinUserImage(logedinUserdata.image); 
+                } 
             }
         }
-    
+
         async function fetchData() {
             await fetchVideo();
             if (video && video.channel) {
@@ -106,9 +112,9 @@ function PlayVideo() {
                 await fetchLogedInUserData();
             }
         }
-    
+
         fetchData();
-    // The empty dependency array ensures this effect runs only once after the initial render
+        // The empty dependency array ensures this effect runs only once after the initial render
     }, []);
 
     const handleLike = async () => {
@@ -240,7 +246,7 @@ function PlayVideo() {
                     </div>
                     <hr />
                     <div className='publisher'>
-                        <img src={userImage} alt='publisher' />
+                        <img src={uploadedUserImage} alt='publisher' />
                         <div>
                             <p>{video.channel}</p>
                             {/** need a think how to do that!!! */}
@@ -252,6 +258,13 @@ function PlayVideo() {
                         <p>{video.description}</p>
                         <hr />
                         <h4>{video.comments} Comments</h4>
+                    </div>
+                    <div className='add-comment-container'>
+                        <img className="img" src={logedinUserImage} alt='commenter' />
+                        <div>
+                            <input type="text" placeholder="Add a comment..." className="add-comment-input" value="Add a comment..." />
+                            <button className="add-comment-button">Comment</button>
+                        </div>
                     </div>
                     <div className='comment'>
                         <img src='https://via.placeholder.com/50' alt='commenter' />
