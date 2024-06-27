@@ -107,18 +107,21 @@ function PlayVideo() {
             alert('Please log in to like videos.');
             return;
         }
+        let updatedVideo = { ...video };
         if (userInteraction !== LIKE) {
             // Visualize the like
             setUserInteraction(LIKE);
-            video.LIKE++; // Increment like count
-    
+            updatedVideo.likes = (updatedVideo.likes || 0) + 1;
+            setVideo(updatedVideo);
             // Update the video likes on the database
             await updateVideoLikes(Number(videoId), true); // true for like
             await updateUserInteraction(Number(videoId), LIKE);
         } else {
             // If already liked, clicking again will remove the like
             setUserInteraction(NONE);
-            video.LIKE--; // Decrement like count
+            updatedVideo.likes = (updatedVideo.likes || 0) - 1;
+            setVideo(updatedVideo);
+            // Update the video likes on the database
             await updateVideoLikes(Number(videoId), false); // false to decrease like
             await updateUserInteraction(Number(videoId), NONE);
         }
@@ -130,18 +133,20 @@ function PlayVideo() {
             alert('Please log in to dislike videos.');
             return;
         }
+        let updatedVideo = { ...video };
         if (userInteraction !== DISLIKE) {
             // visoalize the dislike
             setUserInteraction(DISLIKE);
-            video.DISLIKE++;
-
+            updatedVideo.dislikes = (updatedVideo.dislikes || 0) + 1;
+            setVideo(updatedVideo);
             // update the video dislikes on the database
             await updateVideoDislikes(Number(videoId), true); // true for dislike
             await updateUserInteraction(Number(videoId), DISLIKE);
         } else {
             // If already disliked, clicking again will remove the dislike
             setUserInteraction(NONE);
-            video.DISLIKE--;  
+            updatedVideo.dislikes = (updatedVideo.dislikes || 0) - 1;
+            setVideo(updatedVideo);
             await updateVideoDislikes(Number(videoId), false); // false to decrease dislike
             await updateUserInteraction(Number(videoId), NONE);
         }
