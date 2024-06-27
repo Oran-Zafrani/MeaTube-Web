@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { openDB } from 'idb';
 import './PlayVideo.css';
@@ -6,41 +6,57 @@ import { parseUploadTime } from '../../Components/Feed/VideoCard';
 import defaultImage from '../../assets/images/guest_image.png';
 
 
+
+
 // Define your component or function here
 function PlayVideo() {
+    const firstTimeToUpdateViews = useRef(true);
     const [videoSrc, setVideoSrc] = useState('');
     const { videoId } = useParams();
     const [video, setVideo] = useState(null); // Add a new state variable for the video object
     const [subscriberCount, setSubscriberCount] = useState('Loading...');
-    const [uploadedUserImage, setUserImage] = useState('defaultImagePath.jpg');
-    const [userInteraction, setUserInteraction] = useState(0); 
+    const [uploadedUserImage, setUserImage] = useState(defaultImage);
+    const [userInteraction, setUserInteraction] = useState(0);
     // Define constants for user interactions
     const NONE = 0, LIKE = 1, DISLIKE = 2;
     const [logedinUserImage, setlogedinUserImage] = useState(defaultImage);
+    const [comment, setComment] = useState('');
+    const [comments, setComments] = useState([]);
+
+
 
     useEffect(() => {
         async function fetchVideo() {
             try {
-                console.log('Fetching video for ID:', videoId);
                 const db = await openDB('meatubeDB', 1);
                 const tx = db.transaction('videos', 'readonly');
                 const store = tx.objectStore('videos');
                 const allVideos = await store.getAll();
                 const video = allVideos.find(v => v.id === Number(videoId));
-                console.log("video info: ", video); // Check if the video was found
+                if (firstTimeToUpdateViews.current) {
+                    console.log("video info: ", video); // Check if the video was found
+                }
                 if (video && video.videoFile) {
                     setVideoSrc(video.videoFile);
                     // Update the video state variable
                     setVideo(video);
 
-                    // Increment the view count
-                    video.views = (video.views || 0) + 1;
+                    if (video && video.commentsLink) {
+                        setComments(video.commentsLink);
+                    }
 
-                    // Update the video in the database
-                    const updateTx = db.transaction('videos', 'readwrite');
-                    const updateStore = updateTx.objectStore('videos');
-                    await updateStore.put(video); // Assuming 'id' is your keyPath
-                    await updateTx.complete;
+                    // Increment the view count
+                    if (firstTimeToUpdateViews.current) {
+                        firstTimeToUpdateViews.current = false;
+                        video.views = (video.views || 0) + 1;
+
+
+                        // Update the video in the database
+                        const updateTx = db.transaction('videos', 'readwrite');
+                        const updateStore = updateTx.objectStore('videos');
+                        await updateStore.put(video); // Assuming 'id' is your keyPath
+                        await updateTx.complete;
+                    }
                 } else {
                     console.log('No video found or video has no URL');
                 }
@@ -58,7 +74,10 @@ function PlayVideo() {
                 const transaction = db.transaction(["users"], "readonly");
                 const objectStore = transaction.objectStore("users");
                 const channelData = await objectStore.get(channel);
-                console.log('Channel data fetched:', channelData);
+                if (firstTimeToUpdateViews.current) {
+                    console.log('Channel data fetched:', channelData);
+                }
+
 
                 if (channelData && Number.isInteger(channelData.subscribers)) {
                     setSubscriberCount(`${channelData.subscribers} subscribers`);
@@ -87,21 +106,20 @@ function PlayVideo() {
                 const transaction = db.transaction(["users"], "readonly");
                 const objectStore = transaction.objectStore("users");
                 const logedinUserdata = await objectStore.get(loggedInUser);
-                console.log('Logged in user:', logedinUserdata);
+                if (firstTimeToUpdateViews.current) {
+                    console.log('Logged in user:', logedinUserdata);
+                }
                 // Check if the user like or dislike the video and set the state variable
                 if (logedinUserdata.likedVideos.includes(Number(videoId))) {
-                    console.log('Logged in user liked the video');
                     setUserInteraction(LIKE);
                 } else if (logedinUserdata.dislikedVideos.includes(Number(videoId))) {
-                    console.log('Logged in user disliked the video');
                     setUserInteraction(DISLIKE);
                 } else {
-                    console.log('Logged in user has no interaction with the video');
                     setUserInteraction(NONE);
                 }
                 if (logedinUserdata && logedinUserdata.image) {
-                    setlogedinUserImage(logedinUserdata.image); 
-                } 
+                    setlogedinUserImage(logedinUserdata.image);
+                }
             }
         }
 
@@ -114,8 +132,7 @@ function PlayVideo() {
         }
 
         fetchData();
-        // The empty dependency array ensures this effect runs only once after the initial render
-    }, []);
+    }, [video, userInteraction, comments]);
 
     const handleLike = async () => {
         const loggedInUser = localStorage.getItem('loggedInUser');
@@ -226,6 +243,67 @@ function PlayVideo() {
         }
     }
 
+    function hendleSubscribe() {
+        alert('didnt implement yet!');
+    }
+
+    const handleCommentChange = (event) => {
+        setComment(event.target.value);
+    };
+
+    async function handleNewComment(commentText) {
+        // Check if the user is logged in
+        const loggedInUser = localStorage.getItem('loggedInUser');
+        if (!loggedInUser || loggedInUser === 'null') {
+            alert('Please log in to post comments.');
+            return;
+        }
+        // Check if the comment is empty
+        if (!commentText.trim()) {
+            alert('Comment cannot be empty.');
+            return;
+        }
+
+        try {
+            const db = await openDB('meatubeDB', 1);
+            if (!db.objectStoreNames.contains('videos')) {
+                console.error("Object store 'videos' does not exist.");
+                return;
+            }
+            const tx = db.transaction('videos', 'readwrite');
+            const store = tx.objectStore('videos');
+            const allVideos = await store.getAll();
+            const video = allVideos.find(v => v.id === Number(videoId));
+            if (!video) {
+                console.error('Video not found.');
+                return;
+            }
+            // Create the comment object
+            const comment = {
+                commentText,
+                user: loggedInUser,
+                userImage: logedinUserImage,
+                timestamp: new Date().toISOString(),
+                likesNum: 0,
+                dislikesNum: 0
+            };
+            video.comments++;
+            // Add the comment to the video's comments list
+            if (!video.commentsLink) {
+                video.commentsLink = [comment];
+            } else {
+                video.commentsLink.push(comment);
+            }
+            setComment('');
+            // Update the video in the database
+            await store.put(video);
+            await tx.done;
+            console.log('Comment added successfully');
+            // should do!!!!!!, update the UI or state to reflect the new comment
+        } catch (error) {
+            console.error('Failed to add comment:', error);
+        }
+    }
 
 
     return (
@@ -252,7 +330,7 @@ function PlayVideo() {
                             {/** need a think how to do that!!! */}
                             <span>{subscriberCount} </span>
                         </div>
-                        <button>Subscribe</button>
+                        <button onClick={hendleSubscribe}>Subscribe</button>
                     </div>
                     <div className='vid-description'>
                         <p>{video.description}</p>
@@ -262,8 +340,8 @@ function PlayVideo() {
                     <div className='add-comment-container'>
                         <img className="img" src={logedinUserImage} alt='commenter' />
                         <div>
-                            <input type="text" placeholder="Add a comment..." className="add-comment-input" value="Add a comment..." />
-                            <button className="add-comment-button">Comment</button>
+                            <input type="text" placeholder="Add a comment..." className="add-comment-input" value={comment} onChange={handleCommentChange} />
+                            <button className="add-comment-button" onClick={() => handleNewComment(comment)}>Comment</button>
                         </div>
                     </div>
                     <div className='comment'>
