@@ -344,42 +344,23 @@ function PlayVideo() {
                             <button className="add-comment-button" onClick={() => handleNewComment(comment)}>Comment</button>
                         </div>
                     </div>
-                    <div className='comment'>
-                        <img src='https://via.placeholder.com/50' alt='commenter' />
-                        <div>
-                            <h3>John Doe <span>1 day ago</span></h3>
-                            <p>It looks fun!!</p>
-                            <div className='comment-action'>
-                                <i className="bi bi-hand-thumbs-up-fill"></i>
-                                <span>15</span>
-                                <i className="bi bi-hand-thumbs-down-fill"></i>
+                    {
+                        comments.map((comment, index) => (
+                            <div className='comment' key={index}>
+                                <img src={comment.userImage || 'https://via.placeholder.com/50'} alt='commenter' className="commenter-image" />
+                                <div>
+                                    <h3>{comment.user} <span>{parseUploadTime(comment.timestamp)}</span></h3>
+                                    <p>{comment.commentText}</p>
+                                    <div className='comment-action'>
+                                        <i className="bi bi-hand-thumbs-up-fill"></i>
+                                        <span>{comment.likesNum}</span>
+                                        <i className="bi bi-hand-thumbs-down-fill"></i>
+                                        <span>{comment.dislikesNum}</span>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div className='comment'>
-                        <img src='https://via.placeholder.com/50' alt='commenter' />
-                        <div>
-                            <h3>John Cena <span>1 day ago</span></h3>
-                            <p>Awesome!!</p>
-                            <div className='comment-action'>
-                                <i className="bi bi-hand-thumbs-up-fill"></i>
-                                <span>495</span>
-                                <i className="bi bi-hand-thumbs-down-fill"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='comment'>
-                        <img src='https://via.placeholder.com/50' alt='commenter' />
-                        <div>
-                            <h3>John Wick <span>1 day ago</span></h3>
-                            <p>Call me in the next time!!</p>
-                            <div className='comment-action'>
-                                <i className="bi bi-hand-thumbs-up-fill"></i>
-                                <span>45</span>
-                                <i className="bi bi-hand-thumbs-down-fill"></i>
-                            </div>
-                        </div>
-                    </div>
+                        ))
+                    }
                 </>
             ) : (
                 <p>Video information is loading...</p>

@@ -192,3 +192,6 @@
     border-radius: 50%; /* This makes the image a perfect circle */
     margin-right: 10px; /* Space between image and the input field */
 }
+.commenter-image {
+    margin-top: 10px; /* Adjust this value as needed */
+}
