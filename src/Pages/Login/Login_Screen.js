@@ -1,53 +1,75 @@
-import React, { useState, useContext } from 'react'; // Importing React and useState hook from react
-import { Button, Form } from 'react-bootstrap'; // Importing Button and Form components from react-bootstrap
-import axios from 'axios'; // Importing axios for making HTTP requests
+import React, { useState, useContext, useEffect } from 'react';
+import { Button, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { ThemeContext } from '../../Theme/ThemeContext';
 import './Login_Screen.css';
 
 // Login component
 function Login() {
-  // useNavigate is a hook from react-router-dom that allows navigation between routes
   const navigate = useNavigate();
   const { darkMode } = useContext(ThemeContext);
-
-
-  // useState hook to manage username and password state
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault(); // Preventing default form submission behaviour
+  useEffect(() => {
+    // Initialize IndexedDB
+    if (!window.indexedDB) {
+      console.log("Your browser doesn't support IndexedDB.");
+      return;
+    }
 
-    // Check if username and password are filled out
+    const request = window.indexedDB.open("MeaTubeDB", 1);
+
+    request.onerror = (event) => {
+      console.error("Database error: ", event.target.errorCode);
+    };
+
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      // Create an objectStore for this database
+      const objectStore = db.createObjectStore("users", { keyPath: "username" });
+      objectStore.createIndex("password", "password", { unique: false });
+    };
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     if (!username || !password) {
       alert("Please fill in all fields!");
       return;
     }
 
-    // Check if user exists in local storage
-    const storedData = localStorage.getItem(username);
-    if (!storedData) {
-      alert("User does not exist!");
-      return;
-    }
+    const dbRequest = window.indexedDB.open("MeaTubeDB");
 
-    // Parse stored data
-    const { password: storedPassword } = JSON.parse(storedData);
+    dbRequest.onsuccess = (event) => {
+      const db = event.target.result;
+      const transaction = db.transaction(["users"], "readonly");
+      const objectStore = transaction.objectStore("users");
+      const userRequest = objectStore.get(username);
 
-    // Check if entered password matches stored password
-    if (password !== storedPassword) {
-      alert("Incorrect password!");
-      return;
-    }
+      userRequest.onsuccess = () => {
+        const userData = userRequest.result;
+        if (!userData) {
+          alert("User does not exist!");
+          return;
+        }
+        if (password !== userData.password) {
+          alert("Incorrect password!");
+          return;
+        }
+        alert('User logged in successfully');
 
-    alert('User logged in successfully');
+        // Save logged-in user to local storage
+        localStorage.setItem('loggedInUser', username);
 
-    // Save logged-in user to local storage
-    localStorage.setItem('loggedInUser', username);
+        // Navigate to home page
+        navigate('/');
+      };
+    };
 
-    // Navigate to home page
-    navigate('/');
+    dbRequest.onerror = (event) => {
+      console.error("Error opening database: ", event.target.errorCode);
+    };
   };
 
   // Rendering form
