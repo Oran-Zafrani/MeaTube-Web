@@ -9,11 +9,8 @@ function Feed() {
 
   useEffect(() => {
     async function fetchVideos() {
-      const db = await openDB('meatubeDB', 1);
-      const tx = db.transaction('videos', 'readonly');
-      const store = tx.objectStore('videos');
-      const allVideos = await store.getAll();
-      setVideos(allVideos);
+      const videos = await getVideos();
+      setVideos(videos);
     }
 
     fetchVideos();
@@ -28,4 +25,11 @@ function Feed() {
   );
 }
 
+export async function getVideos() {
+  const db = await openDB('meatubeDB', 1);
+  const tx = db.transaction('videos', 'readonly');
+  const store = tx.objectStore('videos');
+  const allVideos = await store.getAll();
+  return [...FeedJson, ...allVideos];
+}
 export default Feed;

@@ -5,16 +5,16 @@ const VideoCard = (vidCard) => {
     const video = vidCard.vidCard;
     return (
         <Link to={`watch/${video.id}`} className='card'>
-        <img src={video.previewImage} alt='' />
-        <h2>{video.title}</h2>
-        <h3>{video.channel}</h3>
-        <p>{formatViews(video.views)} &bull; {parseUploadTime(video.uploadTime)}</p>
-    </Link> 
+            <img src={video.previewImage} alt='' />
+            <h2>{video.title}</h2>
+            <h3>{video.channel}</h3>
+            <p>{formatViews(video.views)} &bull; {parseUploadTime(video.uploadTime)}</p>
+        </Link> 
     );
 };
 
 //formatViews function to format the views
-function formatViews(views) {
+export function formatViews(views) {
     const formatter = new Intl.NumberFormat('en-US', {
       notation: 'compact',
       compactDisplay: 'short',
