@@ -46,7 +46,7 @@
   background-color: #1A202C;
 }
 
-.login-form {
+.register-form {
   background-color: #fff;
   padding: 3rem;
   /* Increase the padding */
@@ -59,14 +59,27 @@
   /* Add this to make the form a flex container */
 }
 
-.login-form .left {
+.register-form .left {
   flex: 1;
-  /* Add this to make the left side take up half the width */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  flex-wrap: nowrap;
+  align-items: center;
 }
 
-.login-form .right {
+.register-form .right {
   flex: 1;
   /* Add this to make the right side take up half the width */
+}
+
+.left img {
+  width: 200px;  /* Set your desired width */
+  height: 200px; /* Set the same value as width to make it square */
+  object-fit: cover; /* This maintains the aspect ratio and covers the entire space */
+  object-position: center; /* Centers the image within the container */
+  border-radius: 50%;
 }
 
 .text-2xl {
