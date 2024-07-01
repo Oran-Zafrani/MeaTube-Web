@@ -15,17 +15,18 @@
 .card h2{
     font-size: 16px;
     font-weight: 600;
-    color: black;
+    color: var(--primary-text-color);
     margin: 5px 0;
 }
 
 .card h3{
     font-size: 14px;
     font-weight: 600;
-    color: #555;
+    color: var(--secondary-text-color);
     margin: 6px 0;
 }
 
 .card p{
     font-size: 14px;
+    color: var(--secondary-text-color);
 }

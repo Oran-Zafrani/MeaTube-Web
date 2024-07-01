@@ -4,8 +4,9 @@ import defaultProfilePic from '../../assets/images/guest_image.png';
 import './Navbar.css';
 import { useNavigate } from 'react-router-dom';
 import { openDB } from 'idb';
+import Darkmode from './Darkmode';
 
-const Navbar = ({ setSidebar }) => {
+const Navbar = ({ setSidebar, setIsChecked }) => {
     const navigate = useNavigate();
     const [profilePic, setProfilePic] = useState(defaultProfilePic); // State to manage profile picture
 
@@ -68,6 +69,7 @@ const Navbar = ({ setSidebar }) => {
                 </div>
 
                 <div className='nav-right flex-div'>
+                    <Darkmode  handleChange={() => setIsChecked(prev => prev === false ? true : false)} />
                     <i className="bi bi-upload" onClick={() => navigate('/AddMovie')} ></i>
                     <i className="bi bi-bell"></i>
                     <img className='profile' src={profilePic} onClick={checkLoggedIUser} alt='profile-pic'/>

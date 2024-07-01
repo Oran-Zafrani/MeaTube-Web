@@ -19,6 +19,8 @@ import Navbar from './Components/Navbar/Navbar';
 // The main App component
 function App() {
   const [sidebar, setSidebar] = useState(true);
+  const [isDark, setIsDark] = useState(false);
+
   // Using the useEffect hook to set the loggedInUser to null when the app starts
   useEffect(() => {
     localStorage.setItem('loggedInUser', null);
@@ -31,12 +33,12 @@ function App() {
     <ThemeProvider>
 
       <Router>
-        <div className="App">
+        <div className="App" data-theme={isDark ? "dark" : "light"}>
           <header className="App-header">
             <div className="App">
 
               <div>
-                <Navbar setSidebar={setSidebar}/>
+                <Navbar setSidebar={setSidebar} setIsChecked={setIsDark}/>
               </div>
               <Routes>
                 {/* The Route for the Movie_View_Screen is set to the root path ("/") */}
