@@ -9,7 +9,7 @@ function MovieList() {
   const { darkMode } = useContext(ThemeContext);
 
   return (
-    <div className={`play-container ${darkMode ? 'dark-mode' : ''}`}>
+    <div className={`play-container `}>
         <PlayVideo />
         <Recommended />
     </div>

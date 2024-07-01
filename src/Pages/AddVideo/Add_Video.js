@@ -104,7 +104,7 @@ function AddMovie() {
       };
 
     return (
-        <div className={`min-h-screen flex items-center justify-center bg-zinc-100 dark:bg-zinc-900 ${darkMode ? 'dark-mode' : ''}`}>
+        <div className={`min-h-screen flex items-center justify-center bg-zinc-100 dark:bg-zinc-900 `}>
             <Form className="login-form" ref={formRef} onSubmit={handleSubmit}>
                 <div className="left">
                     <h1 className="text-2xl font-semibold">Add Video</h1>

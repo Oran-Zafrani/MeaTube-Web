@@ -21,6 +21,7 @@ import Navbar from './Components/Navbar/Navbar';
 function App() {
   const [sidebar, setSidebar] = useState(true);
   const [isDark, setIsDark] = useState(false);
+  const [searchString, setSearchString] = useState(null);
 
   // Using the useEffect hook to set the loggedInUser to null when the app starts
   useEffect(() => {
@@ -78,12 +79,12 @@ function App() {
             <div className="App">
 
               <div>
-                <Navbar setSidebar={setSidebar} setIsChecked={setIsDark}/>
+                <Navbar setSidebar={setSidebar} setIsChecked={setIsDark} setSearch={setSearchString}/>
               </div>
               <Routes>
                 {/* The Route for the Movie_View_Screen is set to the root path ("/") */}
                 {/* This means that the Movie_View_Screen will be the first to render when the app starts */}
-                <Route path="/" element={<Main sidebar={sidebar} />} />
+                <Route path="/" element={<Main sidebar={sidebar} searchString={searchString} />} />
                 {/* Adding all the other pages */}
                 <Route path="/Login" element={<LoginPage />} />
                 <Route path="/AddMovie" element={<AddMoviePage />} />

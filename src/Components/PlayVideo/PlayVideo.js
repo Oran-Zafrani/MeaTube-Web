@@ -4,6 +4,7 @@ import { openDB } from 'idb';
 import './PlayVideo.css';
 import { parseUploadTime } from '../../Components/Feed/VideoCard';
 import defaultImage from '../../assets/images/guest_image.png';
+import { CommentCard } from './CommentCard';
 
 
 
@@ -292,7 +293,7 @@ function PlayVideo() {
             if (!video.commentsLink) {
                 video.commentsLink = [comment];
             } else {
-                video.commentsLink.push(comment);
+                video.commentsLink = [comment, ...video.commentsLink];
             }
             setComment('');
             // Update the video in the database
@@ -346,19 +347,7 @@ function PlayVideo() {
                     </div>
                     {
                         comments.map((comment, index) => (
-                            <div className='comment' key={index}>
-                                <img src={comment.userImage || 'https://via.placeholder.com/50'} alt='commenter' className="commenter-image" />
-                                <div>
-                                    <h3>{comment.user} <span>{parseUploadTime(comment.timestamp)}</span></h3>
-                                    <p>{comment.commentText}</p>
-                                    <div className='comment-action'>
-                                        <i className="bi bi-hand-thumbs-up-fill"></i>
-                                        <span>{comment.likesNum}</span>
-                                        <i className="bi bi-hand-thumbs-down-fill"></i>
-                                        <span>{comment.dislikesNum}</span>
-                                    </div>
-                                </div>
-                            </div>
+                            <CommentCard index={index} comment={comment} />
                         ))
                     }
                 </>

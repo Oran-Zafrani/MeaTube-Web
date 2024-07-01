@@ -6,9 +6,10 @@ import { useNavigate } from 'react-router-dom';
 import { openDB } from 'idb';
 import Darkmode from './Darkmode';
 
-const Navbar = ({ setSidebar, setIsChecked }) => {
+const Navbar = ({ setSidebar, setIsChecked, setSearch }) => {
     const navigate = useNavigate();
     const [profilePic, setProfilePic] = useState(defaultProfilePic); // State to manage profile picture
+    const [searchString, setSearchString] = useState('');
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -52,6 +53,16 @@ const Navbar = ({ setSidebar, setIsChecked }) => {
         setProfilePic(defaultProfilePic); // Reset profile picture to default on logout
     };
 
+    const handleSubmit = (e) => {
+        e.preventDefault(); // Prevent the default form submission
+        setSearch(searchString); // Update the string state with the input value
+        setSearchString(''); // Clear the input field after submission
+      };
+    
+      const handleInputChange = (e) => {
+        setSearchString(e.target.value); // Update the input value as the user types
+      };
+
     return (
         <div>
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css"></link>
@@ -63,8 +74,8 @@ const Navbar = ({ setSidebar, setIsChecked }) => {
 
                 <div className='nav-middle flex-div'>
                     <div className='search-box flex-div'>
-                        <input type='text' placeholder='Search' />
-                        <button type="submit"><i className="bi bi-search"></i></button>
+                        <input type='text' value={searchString} onChange={handleInputChange} placeholder='Search' />
+                        <button type="submit" onClick={handleSubmit}><i className="bi bi-search"></i></button>
                     </div>
                 </div>
 

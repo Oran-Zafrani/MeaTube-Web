@@ -74,7 +74,7 @@ function Login() {
 
   // Rendering form
   return (
-    <div className={`min-h-screen flex items-center justify-center bg-zinc-100 dark:bg-zinc-900 ${darkMode ? 'dark-mode' : ''}`}>
+    <div className={`min-h-screen flex items-center justify-center bg-zinc-100 dark:bg-zinc-900 `}>
       <Form className="login-form" onSubmit={handleSubmit}>
         <div className="left">
           <div className="flex items-center mb-6">
