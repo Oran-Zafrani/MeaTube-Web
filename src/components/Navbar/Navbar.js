@@ -12,7 +12,7 @@ const Navbar = ({ setSidebar }) => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const db = await openDB('MeaTubeDB', 1);
+                const db = await openDB('MeaTubeDB');
                 if (!db.objectStoreNames.contains('users')) {
                     throw new Error("Object store 'users' does not exist.");
                 }

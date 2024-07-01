@@ -18,7 +18,7 @@ function Registration() {
     if (!window.indexedDB) {
       alert("Your browser doesn't support a stable version of IndexedDB. Some features will not be available.");
     } else {
-      const request = window.indexedDB.open("MeaTubeDB", 1);
+      const request = window.indexedDB.open("MeaTubeDB");
 
       request.onerror = (event) => {
         console.error("Database error: ", event.target.errorCode);
@@ -63,7 +63,7 @@ function Registration() {
     }
 
     const dbRequest = window.indexedDB.open("MeaTubeDB");
-
+    
     dbRequest.onsuccess = (event) => {
       const db = event.target.result;
       const transaction = db.transaction(["users"], "readwrite");

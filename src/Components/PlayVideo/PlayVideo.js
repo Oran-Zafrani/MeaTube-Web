@@ -28,7 +28,7 @@ function PlayVideo() {
     useEffect(() => {
         async function fetchVideo() {
             try {
-                const db = await openDB('meatubeDB', 1);
+                const db = await openDB('MeaTubeDB');
                 const tx = db.transaction('videos', 'readonly');
                 const store = tx.objectStore('videos');
                 const allVideos = await store.getAll();
@@ -67,7 +67,7 @@ function PlayVideo() {
 
         async function fetchUploadedUserData(channel) {
             try {
-                const db = await openDB('MeaTubeDB', 1);
+                const db = await openDB('MeaTubeDB');
                 if (!db.objectStoreNames.contains('users')) {
                     throw new Error("Object store 'users' does not exist.");
                 }
@@ -99,7 +99,7 @@ function PlayVideo() {
         async function fetchLogedInUserData() {
             const loggedInUser = localStorage.getItem('loggedInUser');
             if (!(loggedInUser === 'null')) {
-                const db = await openDB('MeaTubeDB', 1);
+                const db = await openDB('MeaTubeDB');
                 if (!db.objectStoreNames.contains('users')) {
                     throw new Error("Object store 'users' does not exist.");
                 }
@@ -187,7 +187,7 @@ function PlayVideo() {
 
     // Increment or decrement the number of likes based on isLike. ture ++, flase --
     const updateVideoLikes = async (videoId, isLike) => {
-        const db = await openDB('meatubeDB', 1);
+        const db = await openDB('MeaTubeDB');
         const tx = db.transaction('videos', 'readwrite');
         const store = tx.objectStore('videos');
         const video = await store.get(Number(videoId));
@@ -200,7 +200,7 @@ function PlayVideo() {
     };
 
     const updateVideoDislikes = async (videoId, isDislike) => {
-        const db = await openDB('meatubeDB', 1);
+        const db = await openDB('MeaTubeDB');
         const tx = db.transaction('videos', 'readwrite');
         const store = tx.objectStore('videos');
         const video = await store.get(Number(videoId));
@@ -213,7 +213,7 @@ function PlayVideo() {
 
     async function updateUserInteraction(videoId, interaction) {
         try {
-            const db = await openDB('MeaTubeDB', 1); // Corrected database name
+            const db = await openDB('MeaTubeDB'); // Corrected database name
             // Ensure the 'users' object store exists before proceeding.
             if (!db.objectStoreNames.contains('users')) {
                 console.error("Object store 'users' does not exist.");
@@ -265,7 +265,7 @@ function PlayVideo() {
         }
 
         try {
-            const db = await openDB('meatubeDB', 1);
+            const db = await openDB('MeaTubeDB');
             if (!db.objectStoreNames.contains('videos')) {
                 console.error("Object store 'videos' does not exist.");
                 return;

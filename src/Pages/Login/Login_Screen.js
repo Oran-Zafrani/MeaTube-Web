@@ -18,7 +18,7 @@ function Login() {
       return;
     }
 
-    const request = window.indexedDB.open("MeaTubeDB", 1);
+    const request = window.indexedDB.open("MeaTubeDB");
 
     request.onerror = (event) => {
       console.error("Database error: ", event.target.errorCode);
