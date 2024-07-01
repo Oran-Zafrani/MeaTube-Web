@@ -1,15 +1,11 @@
 .App {
   font-family: 'Roboto', sans-serif;
-  color: #333;
-}
-
-.dark-mode {
-  background-color: #333 !important;
-  color: #fff !important;
+  background-color: var(--background-color);
+  transition: background-color 0.25s ease-in-out;
 }
 
 .App-header {
-  background-color: #ffffff;
+  background-color: var(--background-color);
   min-height: 100vh;
   flex-direction: column;
   align-items: center;

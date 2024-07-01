@@ -101,12 +101,13 @@ function Registration() {
 
   return (
     <div className={`min-h-screen flex items-center justify-center bg-zinc-100 dark:bg-zinc-900 ${darkMode ? 'dark-mode' : ''}`}>
-    <Form className="login-form" onSubmit={handleSubmit}>
+    <Form className="register-form" onSubmit={handleSubmit}>
       <div className="left">
         <div className="flex items-center mb-6">
           <h1 className="text-2xl font-semibold">Register</h1>
         </div>
         <p className="text-zinc">to create a new MeaTube account</p>
+        {image && <img src={image} className="preview-image"/>}
       </div>
       <div className="right">
         <Form.Group className="mb-4">

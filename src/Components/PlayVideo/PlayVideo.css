@@ -21,7 +21,7 @@
     flex-wrap: wrap;
     margin-top: 10px;
     font-size: 14px;
-    color: #5a5a5a;
+    color: var(--secondary-text-color);
 }
 
 .play-video-info i{
@@ -38,7 +38,7 @@
 .play-video hr{
     border: 0;
     height: 1px;
-    background: #ccc;
+    background: var(--background-color);
     margin: 10px 0;
 }
 
@@ -68,13 +68,13 @@
 }
 
 .publisher span{
-    color: #5a5a5a;
+    color: var(--secondary-text-color);
     font-size: 14px;
 }
 
 .publisher button{
     background: red;
-    color: #ffffff;
+    color: var(--background-color);
     padding: 8px 30px;
     border: 0;
     outline: 0;
@@ -90,12 +90,12 @@
 .vid-description p{
     font-size: 14px;
     margin-bottom: 5px;
-    color: #5a5a5a;
+    color: var(--secondary-text-color);
 }
 
 .vid-description h4{
     font-size: 14px;
-    color: #5a5a5a;
+    color: var(--secondary-text-color);
     margin-top: 15px;
 }
 
@@ -121,7 +121,7 @@
 
 .comment h3 span{
     font-size: 12px;
-    color: #5a5a5a;
+    color: var(--secondary-text-color);
     font-weight: 500;
     margin-left: 8px;
 }
@@ -136,12 +136,12 @@
 .comment-action i{
     font-size: 18px;
     margin-right: 8px;
-    color: #5a5a5a;
+    color: var(--secondary-text-color);
 }
 
 .comment-action span{
     margin-right: 15px;
-    color: #5a5a5a;
+    color: var(--secondary-text-color);
 }
 
 .like-selected {

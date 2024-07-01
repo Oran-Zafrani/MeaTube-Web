@@ -1,12 +1,12 @@
 .sidebar{
-    background: #ffffff;
+    background: var(--background-color);
     width: 10%;
     height: 100vh;
     position: fixed;
     top: 0;
     padding-left: 2%;
     padding-top: 80px;
-    color: #5a5a5a;
+    color: var(--secondary-text-color);
 }
 
 .shortcut-links img{
@@ -36,7 +36,7 @@
     font-size: 13px;
     text-align: left;
     margin: 20px 0;
-    color: #5a5a5a;
+    color: var(--secondary-text-color);
 }
 
 .small-sidebar{

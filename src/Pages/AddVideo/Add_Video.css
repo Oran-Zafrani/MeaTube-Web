@@ -42,7 +42,7 @@
 }
 
 .bg-zinc-100 {
-  background-color: #F7FAFC;
+  background-color: var(--background-color);
 }
 
 .dark .bg-zinc-900 {
@@ -50,7 +50,7 @@
 }
 
 .login-form {
-  background-color: #fff;
+  background-color: var(--background-color);
   padding: 3rem;
   /* Increase the padding */
   border-radius: 0.5rem;
@@ -74,6 +74,7 @@
 
 .text-2xl {
   font-size: 3rem;
+  color: var(--primary-text-color)
 }
 
 .font-semibold {
@@ -81,7 +82,7 @@
 }
 
 .text-zinc {
-  color: #718096;
+  color: var(--secondary-text-color);
 }
 
 .input-field {
@@ -100,7 +101,7 @@
 }
 
 .text-blue-btn {
-  background-color: #f8f8f8;
+  background-color: var(--background-color);
   color: #3182CE;
   padding: 0.6rem 1.3rem;
   border: none;
@@ -110,7 +111,7 @@
 
 .submit-button {
   background-color: #3182CE;
-  color: #fff;
+  color: var(--background-color);
   padding: 0.6rem 1.3rem;
   border-radius: 0.25rem;
   font-size: 1.1rem;
