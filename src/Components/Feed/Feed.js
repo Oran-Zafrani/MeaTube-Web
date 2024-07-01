@@ -26,7 +26,7 @@ function Feed() {
 }
 
 export async function getVideos() {
-  const db = await openDB('meatubeDB', 1);
+  const db = await openDB('MeaTubeDB');
   const tx = db.transaction('videos', 'readonly');
   const store = tx.objectStore('videos');
   const allVideos = await store.getAll();
