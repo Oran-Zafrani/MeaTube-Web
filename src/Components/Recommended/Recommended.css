@@ -1,5 +1,10 @@
 .recommended {
     flex-basis: 30%;
+    width: 402px; 
+    height: calc(100vh - 56px); 
+    overflow-y: auto;
+    padding-right: 16px; 
+    padding-bottom: 20px;
 }
 .side-video-list{
     display: flex;

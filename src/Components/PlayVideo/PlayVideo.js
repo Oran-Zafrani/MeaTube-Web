@@ -186,6 +186,16 @@ function PlayVideo() {
         }
     };
 
+    function handleShare() {
+        navigator.clipboard.writeText(window.location.origin + window.location.pathname).then(() => {
+            console.log('URL copied to clipboard');
+            alert('URL copied to clipboard!');
+
+        }).catch(err => {
+          console.error('Failed to copy: ', err);
+        });
+      }
+
     // Increment or decrement the number of likes based on isLike. ture ++, flase --
     const updateVideoLikes = async (videoId, isLike) => {
         const db = await openDB('MeaTubeDB');
@@ -317,10 +327,10 @@ function PlayVideo() {
                     <h3>{video.title}</h3>
                     <div className='play-video-info'>
                         <p>{video.views} views &bull; {parseUploadTime(video.uploadTime)}</p>
-                        <div>
-                            <span className={userInteraction === LIKE ? "bi bi-hand-thumbs-up-fill like-selected" : "bi bi-hand-thumbs-up-fill"} onClick={handleLike}>{video.likes}</span>
-                            <span className={userInteraction === DISLIKE ? "bi bi-hand-thumbs-down-fill dislike-selected" : "bi bi-hand-thumbs-down-fill"} onClick={handleDislike}>{video.dislikes}</span>
-                            <span><i className="bi bi-share-fill"></i> Share</span>
+                        <div >
+                            <span className={`video-action-button ${userInteraction === LIKE ? "bi bi-hand-thumbs-up-fill like-selected" : "bi bi-hand-thumbs-up-fill"}`} onClick={handleLike}>{video.likes}</span>
+                            <span className={`video-action-button ${userInteraction === DISLIKE ? "bi bi-hand-thumbs-down-fill dislike-selected" : "bi bi-hand-thumbs-down-fill"}`} onClick={handleDislike}>{video.dislikes}</span>
+                            <span className='video-action-button' onClick={handleShare}><i className="bi bi-share-fill"></i> Share</span>
                         </div>
                     </div>
                     <hr />
@@ -345,11 +355,14 @@ function PlayVideo() {
                             <button className="add-comment-button" onClick={() => handleNewComment(comment)}>Comment</button>
                         </div>
                     </div>
-                    {
-                        comments.map((comment, index) => (
-                            <CommentCard index={index} comment={comment} />
-                        ))
-                    }
+                    <div className='comment-container'>
+                        {
+                            comments.map((comment, index) => (
+                                <CommentCard index={index} comment={comment} />
+                            ))
+                        }
+                    </div>
+
                 </>
             ) : (
                 <p>Video information is loading...</p>
