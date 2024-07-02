@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 const VideoCard = (vidCard) => {
     const video = vidCard.vidCard;
     return (
-        <Link to={`watch/${video.id}`} className='card'>
+        <Link to={`watch/${video.id}`} className='card' onClick={()=> window.scrollTo(0,0)}>
             <img src={video.previewImage} alt='' />
             <h2>{video.title}</h2>
             <h3>{video.channel}</h3>
