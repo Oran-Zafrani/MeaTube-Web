@@ -133,7 +133,7 @@ function PlayVideo() {
         }
 
         fetchData();
-    }, [video, userInteraction, comments]);
+    }, [video, userInteraction, comments, videoId]);
 
     const handleLike = async () => {
         const loggedInUser = localStorage.getItem('loggedInUser');
