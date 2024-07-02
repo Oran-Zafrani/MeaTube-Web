@@ -22,3 +22,22 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+
+:root {
+  --background-color: #ffffff;
+  --foreground-color: #ff4040;
+  --primary-text-color: #0a0a0a;
+  --secondary-text-color: #5a5a5a;
+  --toggle-bg: #f0eb9d;
+  --toggle-fg: #ffd000;
+}
+
+[data-theme="dark"] {
+  --background-color: #3e4451;
+  --foreground-color: #ff4040;
+  --primary-text-color: #f6f6f6;
+  --secondary-text-color: #c2c2c2;
+  --toggle-bg: #283452;
+  --toggle-fg: #00a6ff;
+}

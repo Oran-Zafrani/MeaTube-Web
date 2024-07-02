@@ -5,15 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import { openDB } from 'idb';
 import './Add_Video.css';
 
-// IndexedDB helper functions
-const dbPromise = openDB('meatubeDB', 1, {
-    upgrade(db) {
-      if (!db.objectStoreNames.contains('videos')) {
-        db.createObjectStore('videos', { keyPath: 'id', autoIncrement: true });
-      }
-    },
-  });
-
 function AddMovie() {
     const { darkMode } = useContext(ThemeContext);
     const navigate = useNavigate();
@@ -95,7 +86,7 @@ function AddMovie() {
         console.log('newVideo:', newVideo);
     
         try {
-          const db = await dbPromise;
+          const db = await openDB('MeaTubeDB');
           const tx = db.transaction('videos', 'readwrite');
           const store = tx.objectStore('videos');
           await store.add(newVideo);
@@ -113,7 +104,7 @@ function AddMovie() {
       };
 
     return (
-        <div className={`min-h-screen flex items-center justify-center bg-zinc-100 dark:bg-zinc-900 ${darkMode ? 'dark-mode' : ''}`}>
+        <div className={`min-h-screen flex items-center justify-center bg-zinc-100 dark:bg-zinc-900 `}>
             <Form className="login-form" ref={formRef} onSubmit={handleSubmit}>
                 <div className="left">
                     <h1 className="text-2xl font-semibold">Add Video</h1>

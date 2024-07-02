@@ -4,20 +4,18 @@ import FeedJson from '../../../src/assets/jsons/Feed.json';
 import VideoCard from './VideoCard';
 import { openDB } from 'idb';
 
-function Feed() {
+function Feed(searchString) {
   const [videos, setVideos] = useState([]);
 
   useEffect(() => {
     async function fetchVideos() {
-      const db = await openDB('meatubeDB', 1);
-      const tx = db.transaction('videos', 'readonly');
-      const store = tx.objectStore('videos');
-      const allVideos = await store.getAll();
-      setVideos(allVideos);
+      let videos = await getVideos();
+      videos = handleSearch(videos, searchString.searchString);
+      setVideos(videos);
     }
 
     fetchVideos();
-  }, []);
+  }, [searchString]);
 
   return (
     <div className='feed'>
@@ -28,4 +26,22 @@ function Feed() {
   );
 }
 
+
+function handleSearch(videos, searchStr) {
+  if (searchStr === null || searchStr === undefined || searchStr === '') {
+    return videos;
+  }
+  const searchString = String(searchStr).toLowerCase();
+  return videos.filter((video) => {
+    return video.title.toLowerCase().includes(searchString);
+  });
+}
+
+export async function getVideos() {
+  const db = await openDB('MeaTubeDB');
+  const tx = db.transaction('videos', 'readonly');
+  const store = tx.objectStore('videos');
+  const allVideos = await store.getAll();
+  return [...FeedJson, ...allVideos];
+}
 export default Feed;
