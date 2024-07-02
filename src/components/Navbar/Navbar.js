@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { openDB } from 'idb';
 import Darkmode from './Darkmode';
 
-const Navbar = ({ setSidebar, setIsChecked, setSearch }) => {
+const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedInUser }) => {
     const navigate = useNavigate();
     const [profilePic, setProfilePic] = useState(defaultProfilePic); // State to manage profile picture
     const [searchString, setSearchString] = useState('');
@@ -20,7 +20,6 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch }) => {
                 }
                 const transaction = db.transaction(["users"], "readonly");
                 const objectStore = transaction.objectStore("users");
-                const loggedInUser = localStorage.getItem('loggedInUser'); // Assuming loggedInUser stores the channel/user identifier
                 const channelData = await objectStore.get(loggedInUser);
 
                 if (channelData && channelData.image) {
@@ -36,7 +35,7 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch }) => {
         };
 
         fetchUserData();
-    }, []);
+    }, [loggedInUser]);
 
     const checkLoggedIUser = () => {
         const loggedInUser = localStorage.getItem('loggedInUser');
@@ -50,10 +49,12 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch }) => {
     // Function to handle logout (assuming you have one)
     const handleLogout = () => {
         // Perform logout operations...
+        setLoggedInUser(null); // Reset the logged in user
+        localStorage.setItem('loggedInUser', 'null'); // Reset the logged in user
         setProfilePic(defaultProfilePic); // Reset profile picture to default on logout
     };
 
-    const handleSubmit = (e) => {
+    const handleSearchSubmit = (e) => {
         e.preventDefault(); // Prevent the default form submission
         setSearch(searchString); // Update the string state with the input value
         setSearchString(''); // Clear the input field after submission
@@ -75,7 +76,7 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch }) => {
                 <div className='nav-middle flex-div'>
                     <div className='search-box flex-div'>
                         <input type='text' value={searchString} onChange={handleInputChange} placeholder='Search' />
-                        <button type="submit" onClick={handleSubmit}><i className="bi bi-search"></i></button>
+                        <button type="submit" onClick={handleSearchSubmit}><i className="bi bi-search"></i></button>
                     </div>
                 </div>
 
@@ -83,6 +84,7 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch }) => {
                     <Darkmode  handleChange={() => setIsChecked(prev => prev === false ? true : false)} />
                     <i className="bi bi-upload" onClick={() => navigate('/AddMovie')} ></i>
                     <i className="bi bi-bell"></i>
+                    {loggedInUser && <i class="bi bi-box-arrow-left" onClick={handleLogout}></i>}
                     <img className='profile' src={profilePic} onClick={checkLoggedIUser} alt='profile-pic'/>
                 </div>
             </nav>

@@ -5,9 +5,8 @@ import { ThemeContext } from '../../Theme/ThemeContext';
 import './Login_Screen.css';
 
 // Login component
-function Login() {
+function Login({setLoggedIn}) {
   const navigate = useNavigate();
-  const { darkMode } = useContext(ThemeContext);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -61,7 +60,7 @@ function Login() {
 
         // Save logged-in user to local storage
         localStorage.setItem('loggedInUser', username);
-
+        setLoggedIn(username);
         // Navigate to home page
         navigate('/');
       };
