@@ -2,9 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { openDB } from 'idb';
 import './PlayVideo.css';
-import { parseUploadTime } from '../../Components/Feed/VideoCard';
+import { formatViews, parseUploadTime } from '../../Components/Feed/VideoCard';
 import defaultImage from '../../assets/images/guest_image.png';
 import { CommentCard } from './CommentCard';
+import { getVideos } from '../Feed/Feed';
 
 
 
@@ -30,9 +31,7 @@ function PlayVideo() {
         async function fetchVideo() {
             try {
                 const db = await openDB('MeaTubeDB');
-                const tx = db.transaction('videos', 'readonly');
-                const store = tx.objectStore('videos');
-                const allVideos = await store.getAll();
+                const allVideos = await getVideos();
                 const video = allVideos.find(v => v.id === Number(videoId));
                 if (firstTimeToUpdateViews.current) {
                     console.log("video info: ", video); // Check if the video was found
@@ -326,7 +325,7 @@ function PlayVideo() {
                 <>
                     <h3>{video.title}</h3>
                     <div className='play-video-info'>
-                        <p>{video.views} views &bull; {parseUploadTime(video.uploadTime)}</p>
+                        <p>{formatViews(video.views)} views &bull; {parseUploadTime(video.uploadTime)}</p>
                         <div >
                             <span className={`video-action-button ${userInteraction === LIKE ? "bi bi-hand-thumbs-up-fill like-selected" : "bi bi-hand-thumbs-up-fill"}`} onClick={handleLike}>{video.likes}</span>
                             <span className={`video-action-button ${userInteraction === DISLIKE ? "bi bi-hand-thumbs-down-fill dislike-selected" : "bi bi-hand-thumbs-down-fill"}`} onClick={handleDislike}>{video.dislikes}</span>

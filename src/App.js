@@ -12,6 +12,7 @@ import AddMoviePage from './Pages/AddVideo/Add_Video';
 import Watch_Video from './Pages/Video/Watch_Video';
 import RegistrationPage from './Pages/Register/Registration_Screen';
 import { openDB } from 'idb';
+import FeedJson from '../src/assets/jsons/Feed.json';
 
 // Importing the components
 import Navbar from './Components/Navbar/Navbar';
