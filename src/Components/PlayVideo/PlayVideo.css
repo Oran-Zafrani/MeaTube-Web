@@ -100,6 +100,18 @@
     margin-top: 15px;
 }
 
+.video-action-button {
+    cursor: pointer;
+}
+
+.comment-container {
+    max-height: 400px; /* Adjust this value as needed */
+    overflow-y: auto;
+    padding-right: 16px; /* To account for scrollbar width */
+    padding-bottom: 20px;
+}
+
+
 .comment{
     display: flex;
     align-items: flex-start;
