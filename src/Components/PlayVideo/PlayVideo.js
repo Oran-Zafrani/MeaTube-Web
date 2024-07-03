@@ -12,6 +12,7 @@ import { CommentCard } from './CommentCard';
 // Define your component or function here
 function PlayVideo() {
     const firstTimeToUpdateViews = useRef(true);
+    const firstTimeToUpdateUserInteraction = useRef(true);
     const [videoSrc, setVideoSrc] = useState('');
     const { videoId } = useParams();
     const [video, setVideo] = useState(null); // Add a new state variable for the video object
@@ -37,9 +38,6 @@ function PlayVideo() {
                 const store = tx.objectStore('videos');
                 const allVideos = await store.getAll();
                 const video = allVideos.find(v => v.id === Number(videoId));
-                if (firstTimeToUpdateViews.current) {
-                    console.log("video info: ", video); // Check if the video was found
-                }
                 if (video && video.videoFile) {
                     setVideoSrc(video.videoFile);
                     // Update the video state variable
@@ -58,6 +56,7 @@ function PlayVideo() {
                         const updateStore = updateTx.objectStore('videos');
                         await updateStore.put(video);
                         await updateTx.complete;
+                        firstTimeToUpdateViews.current = false;
                     }
                 } else {
                     console.log('No video found or video has no URL');
@@ -67,7 +66,7 @@ function PlayVideo() {
             }
         }
 
-        async function fetchUploadedUserData(channel) {
+        async function fetchUploadedUserData(username) {
             try {
                 const db = await openDB('MeaTubeDB');
                 if (!db.objectStoreNames.contains('users')) {
@@ -75,12 +74,7 @@ function PlayVideo() {
                 }
                 const transaction = db.transaction(["users"], "readonly");
                 const objectStore = transaction.objectStore("users");
-                const channelData = await objectStore.get(channel);
-                if (firstTimeToUpdateViews.current) {
-                    console.log('Channel data fetched:', channelData);
-                }
-
-
+                const channelData = await objectStore.get(username);
                 if (channelData && Number.isInteger(channelData.subscribers)) {
                     setSubscriberCount(`${channelData.subscribers} subscribers`);
                 } else {
@@ -90,7 +84,7 @@ function PlayVideo() {
                 if (channelData && channelData.image) {
                     setUserImage(channelData.image);
                 } else {
-                    setUserImage('defaultImagePath.jpg');
+                    console.log('No image found for the channel');
                 }
             } catch (error) {
                 console.error('Failed to fetch subscriber count:', error);
@@ -108,10 +102,8 @@ function PlayVideo() {
                 const transaction = db.transaction(["users"], "readonly");
                 const objectStore = transaction.objectStore("users");
                 const logedinUserdata = await objectStore.get(loggedInUser);
-                if (firstTimeToUpdateViews.current) {
-                    console.log('Logged in user:', logedinUserdata);
-
-                    // Check if the user like or dislike the video and set the state variable
+                if (firstTimeToUpdateUserInteraction.current) {
+                    // Check if the user like or dislike the video and set the state variable only once
                     if (logedinUserdata.likedVideos.includes(Number(videoId))) {
                         setUserInteraction(LIKE);
                     } else if (logedinUserdata.dislikedVideos.includes(Number(videoId))) {
@@ -123,7 +115,7 @@ function PlayVideo() {
                         setlogedinUserImage(logedinUserdata.image);
                     }
                     // setting the first load to false that insures that the views and likes will be updated only once
-                    firstTimeToUpdateViews.current = false;
+                    firstTimeToUpdateUserInteraction.current = false;
                     setUpdatingInteraction(false);
                 }
             }
@@ -131,8 +123,8 @@ function PlayVideo() {
 
         async function fetchData() {
             await fetchVideo();
-            if (video && video.channel) {
-                await fetchUploadedUserData(video.channel);
+            if (video && video.username) {
+                await fetchUploadedUserData(video.username);
                 await fetchLogedInUserData();
             }
         }
@@ -157,6 +149,7 @@ function PlayVideo() {
                 if (userInteraction === DISLIKE) {
                     // If the user has disliked the video, clicking like will remove the dislike
                     await updateVideoDislikes(Number(videoId), false); // false to decrease dislike
+                    await updateUserInteraction(Number(videoId), NONE);
                 }
                 // Update the video likes on the database
                 await updateVideoLikes(Number(videoId), true); // true for like
@@ -191,6 +184,7 @@ function PlayVideo() {
                 if (userInteraction === LIKE) {
                     // If the user has liked the video, clicking dislike will remove the like
                     await updateVideoLikes(Number(videoId), false); // false to decrease like
+                    await updateUserInteraction(Number(videoId), NONE);
                 }
 
                 // update the video dislikes on the database

@@ -85,6 +85,7 @@ function AddMovie() {
       videoFile,
       previewImage,
       channel,
+      username: loggedInUser,
       uploadTime: new Date().toISOString(),
       views: 0,
       likes: 0,
