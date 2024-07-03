@@ -18,8 +18,11 @@ function PlayVideo() {
     const [subscriberCount, setSubscriberCount] = useState('Loading...');
     const [uploadedUserImage, setUserImage] = useState(defaultImage);
     const [userInteraction, setUserInteraction] = useState(0);
+
     // Define constants for user interactions
     const NONE = 0, LIKE = 1, DISLIKE = 2;
+    // updatingInteraction state variable to prevent rapid successive updates
+    const [updatingInteraction, setUpdatingInteraction] = useState(true);
     const [logedinUserImage, setlogedinUserImage] = useState(defaultImage);
     const [comment, setComment] = useState('');
     const [comments, setComments] = useState([]);
@@ -48,14 +51,12 @@ function PlayVideo() {
 
                     // Increment the view count
                     if (firstTimeToUpdateViews.current) {
-                        firstTimeToUpdateViews.current = false;
                         video.views = (video.views || 0) + 1;
-
 
                         // Update the video in the database
                         const updateTx = db.transaction('videos', 'readwrite');
                         const updateStore = updateTx.objectStore('videos');
-                        await updateStore.put(video); // Assuming 'id' is your keyPath
+                        await updateStore.put(video);
                         await updateTx.complete;
                     }
                 } else {
@@ -109,17 +110,21 @@ function PlayVideo() {
                 const logedinUserdata = await objectStore.get(loggedInUser);
                 if (firstTimeToUpdateViews.current) {
                     console.log('Logged in user:', logedinUserdata);
-                }
-                // Check if the user like or dislike the video and set the state variable
-                if (logedinUserdata.likedVideos.includes(Number(videoId))) {
-                    setUserInteraction(LIKE);
-                } else if (logedinUserdata.dislikedVideos.includes(Number(videoId))) {
-                    setUserInteraction(DISLIKE);
-                } else {
-                    setUserInteraction(NONE);
-                }
-                if (logedinUserdata && logedinUserdata.image) {
-                    setlogedinUserImage(logedinUserdata.image);
+
+                    // Check if the user like or dislike the video and set the state variable
+                    if (logedinUserdata.likedVideos.includes(Number(videoId))) {
+                        setUserInteraction(LIKE);
+                    } else if (logedinUserdata.dislikedVideos.includes(Number(videoId))) {
+                        setUserInteraction(DISLIKE);
+                    } else {
+                        setUserInteraction(NONE);
+                    }
+                    if (logedinUserdata && logedinUserdata.image) {
+                        setlogedinUserImage(logedinUserdata.image);
+                    }
+                    // setting the first load to false that insures that the views and likes will be updated only once
+                    firstTimeToUpdateViews.current = false;
+                    setUpdatingInteraction(false);
                 }
             }
         }
@@ -133,7 +138,7 @@ function PlayVideo() {
         }
 
         fetchData();
-    }, [video, userInteraction, comments, videoId]);
+    }, [video, videoId]);
 
     const handleLike = async () => {
         const loggedInUser = localStorage.getItem('loggedInUser');
@@ -141,23 +146,32 @@ function PlayVideo() {
             alert('Please log in to like videos.');
             return;
         }
-        let updatedVideo = { ...video };
-        if (userInteraction !== LIKE) {
-            // Visualize the like
-            setUserInteraction(LIKE);
-            updatedVideo.likes = (updatedVideo.likes || 0) + 1;
-            setVideo(updatedVideo);
-            // Update the video likes on the database
-            await updateVideoLikes(Number(videoId), true); // true for like
-            await updateUserInteraction(Number(videoId), LIKE);
-        } else {
-            // If already liked, clicking again will remove the like
-            setUserInteraction(NONE);
-            updatedVideo.likes = (updatedVideo.likes || 0) - 1;
-            setVideo(updatedVideo);
-            // Update the video likes on the database
-            await updateVideoLikes(Number(videoId), false); // false to decrease like
-            await updateUserInteraction(Number(videoId), NONE);
+
+        // Prevent rapid successive updates
+        if (updatingInteraction) return;
+        setUpdatingInteraction(true);
+
+        try {
+            if (userInteraction !== LIKE) {
+                setUserInteraction(LIKE);
+                if (userInteraction === DISLIKE) {
+                    // If the user has disliked the video, clicking like will remove the dislike
+                    await updateVideoDislikes(Number(videoId), false); // false to decrease dislike
+                }
+                // Update the video likes on the database
+                await updateVideoLikes(Number(videoId), true); // true for like
+                await updateUserInteraction(Number(videoId), LIKE);
+            } else {
+                setUserInteraction(NONE);
+                // If already liked, clicking again will remove the like
+                // Update the video likes on the database
+                await updateVideoLikes(Number(videoId), false); // false to decrease like
+                await updateUserInteraction(Number(videoId), NONE);
+            }
+        } catch (error) {
+            console.error('Failed to like video:', error);
+        } finally {
+            setUpdatingInteraction(false);
         }
     };
 
@@ -167,22 +181,32 @@ function PlayVideo() {
             alert('Please log in to dislike videos.');
             return;
         }
-        let updatedVideo = { ...video };
-        if (userInteraction !== DISLIKE) {
-            // visoalize the dislike
-            setUserInteraction(DISLIKE);
-            updatedVideo.dislikes = (updatedVideo.dislikes || 0) + 1;
-            setVideo(updatedVideo);
-            // update the video dislikes on the database
-            await updateVideoDislikes(Number(videoId), true); // true for dislike
-            await updateUserInteraction(Number(videoId), DISLIKE);
-        } else {
-            // If already disliked, clicking again will remove the dislike
-            setUserInteraction(NONE);
-            updatedVideo.dislikes = (updatedVideo.dislikes || 0) - 1;
-            setVideo(updatedVideo);
-            await updateVideoDislikes(Number(videoId), false); // false to decrease dislike
-            await updateUserInteraction(Number(videoId), NONE);
+        // Prevent rapid successive updates
+        if (updatingInteraction) return;
+        setUpdatingInteraction(true);
+
+        try {
+            if (userInteraction !== DISLIKE) {
+                setUserInteraction(DISLIKE);
+                if (userInteraction === LIKE) {
+                    // If the user has liked the video, clicking dislike will remove the like
+                    await updateVideoLikes(Number(videoId), false); // false to decrease like
+                }
+
+                // update the video dislikes on the database
+                await updateVideoDislikes(Number(videoId), true); // true for dislike
+                await updateUserInteraction(Number(videoId), DISLIKE);
+            } else {
+                setUserInteraction(NONE);
+                // If already disliked, clicking again will remove the dislike
+
+                await updateVideoDislikes(Number(videoId), false); // false to decrease dislike
+                await updateUserInteraction(Number(videoId), NONE);
+            }
+        } catch (error) {
+            console.error('Failed to dislike video:', error);
+        } finally {
+            setUpdatingInteraction(false);
         }
     };
 
@@ -192,9 +216,9 @@ function PlayVideo() {
             alert('URL copied to clipboard!');
 
         }).catch(err => {
-          console.error('Failed to copy: ', err);
+            console.error('Failed to copy: ', err);
         });
-      }
+    }
 
     // Increment or decrement the number of likes based on isLike. ture ++, flase --
     const updateVideoLikes = async (videoId, isLike) => {
