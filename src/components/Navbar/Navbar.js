@@ -29,7 +29,6 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
                     setProfilePic(defaultProfilePic);
                 }
             } catch (error) {
-                console.error('Failed to fetch user data:', error);
                 setProfilePic(defaultProfilePic);
             }
         };
