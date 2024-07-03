@@ -25,10 +25,9 @@ function PlayVideo() {
     // updatingInteraction state variable to prevent rapid successive updates
     const [updatingInteraction, setUpdatingInteraction] = useState(true);
     const [logedinUserImage, setlogedinUserImage] = useState(defaultImage);
+    const [displayName, setDisplayName] = useState('');
     const [comment, setComment] = useState('');
     const [comments, setComments] = useState([]);
-
-
 
     useEffect(() => {
         async function fetchVideo() {
@@ -78,9 +77,13 @@ function PlayVideo() {
                 if (channelData && Number.isInteger(channelData.subscribers)) {
                     setSubscriberCount(`${channelData.subscribers} subscribers`);
                 } else {
-                    setSubscriberCount('No subscribers data');
+                    console.log('No subscriber count found for the channel');
                 }
-
+                if (channelData && channelData.displayName) {
+                    setDisplayName(channelData.displayName);
+                } else {
+                    console.log('No display name found for the channel');
+                }
                 if (channelData && channelData.image) {
                     setUserImage(channelData.image);
                 } else {
@@ -310,7 +313,8 @@ function PlayVideo() {
             // Create the comment object
             const comment = {
                 commentText,
-                user: loggedInUser,
+                username: loggedInUser,
+                displayName: displayName,
                 userImage: logedinUserImage,
                 timestamp: new Date().toISOString(),
                 likesNum: 0,
@@ -333,6 +337,23 @@ function PlayVideo() {
             console.error('Failed to add comment:', error);
         }
     }
+
+    // Event handler for deleting a comment
+    function handleDeleteComment(commentId) {
+        // Implement logic to delete the comment with the given commentId
+        console.log('Deleting comment with ID:', commentId);
+        // Update the state and UI accordingly
+    }
+
+    // Event handler for editing a comment
+    function handleEditComment(commentId) {
+        // Implement logic to edit the comment with the given commentId
+        console.log('Editing comment with ID:', commentId);
+        // This might involve setting the comment text in an input field for editing
+        // and updating the comment in the state and database on submission
+    }
+
+
 
 
     return (
