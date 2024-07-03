@@ -6,9 +6,6 @@ import { parseUploadTime } from '../../Components/Feed/VideoCard';
 import defaultImage from '../../assets/images/guest_image.png';
 import { CommentCard } from './CommentCard';
 
-
-
-
 // Define your component or function here
 function PlayVideo() {
     const firstTimeToUpdateViews = useRef(true);
@@ -19,6 +16,7 @@ function PlayVideo() {
     const [subscriberCount, setSubscriberCount] = useState('Loading...');
     const [uploadedUserImage, setUserImage] = useState(defaultImage);
     const [userInteraction, setUserInteraction] = useState(0);
+    var loggedInUser = localStorage.getItem('loggedInUser');
 
     // Define constants for user interactions
     const NONE = 0, LIKE = 1, DISLIKE = 2;
@@ -96,8 +94,7 @@ function PlayVideo() {
         }
 
         async function fetchLogedInUserData() {
-            const loggedInUser = localStorage.getItem('loggedInUser');
-            if (!(loggedInUser === 'null')) {
+            if (!(loggedInUser == 'null')) {
                 const db = await openDB('MeaTubeDB');
                 if (!db.objectStoreNames.contains('users')) {
                     throw new Error("Object store 'users' does not exist.");
@@ -136,7 +133,6 @@ function PlayVideo() {
     }, [video, videoId]);
 
     const handleLike = async () => {
-        const loggedInUser = localStorage.getItem('loggedInUser');
         if (!loggedInUser || loggedInUser === 'null') {
             alert('Please log in to like videos.');
             return;
@@ -172,7 +168,6 @@ function PlayVideo() {
     };
 
     const handleDislike = async () => {
-        const loggedInUser = localStorage.getItem('loggedInUser');
         if (loggedInUser === 'null') {
             alert('Please log in to dislike videos.');
             return;
@@ -253,7 +248,6 @@ function PlayVideo() {
             }
             const tx = db.transaction(["users"], "readwrite");
             const store = tx.objectStore('users');
-            const loggedInUser = localStorage.getItem('loggedInUser');
             const user = await store.get(loggedInUser);
             if (user) {
                 switch (interaction) {
@@ -285,7 +279,6 @@ function PlayVideo() {
 
     async function handleNewComment(commentText) {
         // Check if the user is logged in
-        const loggedInUser = localStorage.getItem('loggedInUser');
         if (!loggedInUser || loggedInUser === 'null') {
             alert('Please log in to post comments.');
             return;
@@ -312,8 +305,9 @@ function PlayVideo() {
             }
             // Create the comment object
             const comment = {
+                id: video.commentsLink ? video.commentsLink.length : 0,
                 commentText,
-                username: loggedInUser,
+                userName: loggedInUser,
                 displayName: displayName,
                 userImage: logedinUserImage,
                 timestamp: new Date().toISOString(),
@@ -327,6 +321,7 @@ function PlayVideo() {
             } else {
                 video.commentsLink = [comment, ...video.commentsLink];
             }
+            // Update the state to reflect the new comment
             setComment('');
             // Update the video in the database
             await store.put(video);
@@ -397,7 +392,7 @@ function PlayVideo() {
                     <div className='comment-container'>
                         {
                             comments.map((comment, index) => (
-                                <CommentCard index={index} comment={comment} />
+                                <CommentCard index={index} comment={comment} loggedInUser={loggedInUser} videoId={videoId}/>
                             ))
                         }
                     </div>

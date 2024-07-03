@@ -36,11 +36,15 @@ function AddMovie() {
     }
 
     const fetchDisplayName = async () => {
+      try{
       const db = await openDB('MeaTubeDB');
       const transaction = db.transaction(["users"], "readonly");
       const objectStore = transaction.objectStore("users");
       const logedinUserdata = await objectStore.get(user);
       setchannel(logedinUserdata.displayName);
+      } catch (error) {
+        console.error('Could not fetch user data if the user isnot loggin yet it ok:', error);
+      }
     };
   
     fetchDisplayName(); 
