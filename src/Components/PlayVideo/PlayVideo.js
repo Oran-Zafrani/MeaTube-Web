@@ -361,8 +361,8 @@ function PlayVideo() {
                     <div className='play-video-info'>
                         <p>{formatViews(video.views)} views &bull; {parseUploadTime(video.uploadTime)}</p>
                         <div >
-                            <span className={`video-action-button ${userInteraction === LIKE ? "bi bi-hand-thumbs-up-fill like-selected" : "bi bi-hand-thumbs-up-fill"}`} onClick={handleLike}>{video.likes}</span>
-                            <span className={`video-action-button ${userInteraction === DISLIKE ? "bi bi-hand-thumbs-down-fill dislike-selected" : "bi bi-hand-thumbs-down-fill"}`} onClick={handleDislike}>{video.dislikes}</span>
+                            <span className={`video-action-button ${userInteraction === LIKE ? "bi bi-hand-thumbs-up-fill like-selected" : "bi bi-hand-thumbs-up-fill"}`} onClick={handleLike}>{formatViews(video.likes)}</span>
+                            <span className={`video-action-button ${userInteraction === DISLIKE ? "bi bi-hand-thumbs-down-fill dislike-selected" : "bi bi-hand-thumbs-down-fill"}`} onClick={handleDislike}>{formatViews(video.dislikes)}</span>
                             <span className='video-action-button' onClick={handleShare}><i className="bi bi-share-fill"></i> Share</span>
                         </div>
                     </div>

@@ -42,6 +42,9 @@ function initializeDB() {
           comments: 0,
           commentsLink: [],
         };
+        FeedJson.map((video) => {
+          store.add(video);
+        })
         store.add(sampleVideo);
       }
     },
