@@ -17,6 +17,44 @@ import FeedJson from '../src/assets/jsons/Feed.json';
 // Importing the components
 import Navbar from './Components/Navbar/Navbar';
 
+function initializeDB() {
+  return openDB('MeaTubeDB', 4, {
+    upgrade(db, oldVersion, newVersion, transaction) {
+      if (!db.objectStoreNames.contains('videos')) {
+        db.createObjectStore('videos', { keyPath: 'id', autoIncrement: true });
+      }
+      if (!db.objectStoreNames.contains('users')) {
+        db.createObjectStore('users', { keyPath: 'username' });
+      }
+      if (oldVersion < 4) {
+        const store = transaction.objectStore('videos');
+        const sampleVideo = {
+          title: 'Sample Video',
+          description: 'A random video for demonstration purposes',
+          category: 'Demo',
+          videoFile: 'sample.mp4',
+          previewImage: 'sample.jpg',
+          channel: 'Sample Channel',
+          uploadTime: new Date().toISOString(),
+          views: 0,
+          likes: 0,
+          dislikes: 0,
+          comments: 0,
+          commentsLink: [],
+        };
+        store.add(sampleVideo);
+      }
+    },
+  })
+  .then(db => {
+    console.log("Database initialized successfully");
+    return db; // Return db for further operations if needed
+  })
+  .catch(error => {
+    console.error("Database error: ", error);
+    throw error; // Rethrow or handle error as needed
+  });
+}
 
 // The main App component
 function App() {
@@ -24,53 +62,22 @@ function App() {
   const [isDark, setIsDark] = useState(false);
   const [searchString, setSearchString] = useState(null);
   const [loggedInUser, setLoggedInUser] = useState(null);
+  const [dbInitialized, setDbInitialized] = useState(false);
 
   // Using the useEffect hook to set the loggedInUser to null when the app starts
   useEffect(() => {
-    localStorage.setItem('loggedInUser', null);
-    initializeDB();
+    const init = async () => {
+      localStorage.setItem('loggedInUser', null);
+      await initializeDB();
+      setDbInitialized(true);
+    };
+    init();
   }, []);
 
-  const initializeDB = async () => {
-    try {
-      const db = await openDB('MeaTubeDB', 4, {
-        upgrade(db, oldVersion, newVersion, transaction) {
-          // Create an objectStore for videos if it doesn't already exist
-          if (!db.objectStoreNames.contains('videos')) {
-            db.createObjectStore('videos', { keyPath: 'id', autoIncrement: true });
-          }
-          // Create an objectStore for users if it doesn't already exist
-          if (!db.objectStoreNames.contains('users')) {
-            db.createObjectStore('users', { keyPath: 'username' });
-          }
-  
-          // Check if we're upgrading from a version that didn't have our sample video
-          if (oldVersion < 4) {
-            const store = transaction.objectStore('videos');
-            // this is for us for later use to add 10 videos
-            const sampleVideo = {
-              title: 'Sample Video',
-              description: 'A random video for demonstration purposes',
-              category: 'Demo',
-              videoFile: 'sample.mp4',
-              previewImage: 'sample.jpg',
-              channel: 'Sample Channel',
-              uploadTime: new Date().toISOString(),
-              views: 0,
-              likes: 0,
-              dislikes: 0,
-              comments: 0,
-              commentsLink: [],
-            };
-            store.add(sampleVideo);
-          }
-        },
-      });
-      console.log("Database initialized successfully");
-    } catch (error) {
-      console.error("Database error: ", error);
-    }
-  };
+  // If the database is not initialized, display a loading message
+  if (!dbInitialized) {
+    return <div>Loading...</div>; 
+  }
 
   return (
     <div>

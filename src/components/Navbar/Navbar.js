@@ -29,7 +29,6 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
                     setProfilePic(defaultProfilePic);
                 }
             } catch (error) {
-                console.error('Failed to fetch user data:', error);
                 setProfilePic(defaultProfilePic);
             }
         };
@@ -52,6 +51,11 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
         setLoggedInUser(null); // Reset the logged in user
         localStorage.setItem('loggedInUser', 'null'); // Reset the logged in user
         setProfilePic(defaultProfilePic); // Reset profile picture to default on logout
+        // Refresh the page to reflect the changes
+        const refreshPage = () => {
+            window.location.reload();
+          };
+          refreshPage();
     };
 
     const handleSearchSubmit = (e) => {
