@@ -333,24 +333,6 @@ function PlayVideo() {
         }
     }
 
-    // Event handler for deleting a comment
-    function handleDeleteComment(commentId) {
-        // Implement logic to delete the comment with the given commentId
-        console.log('Deleting comment with ID:', commentId);
-        // Update the state and UI accordingly
-    }
-
-    // Event handler for editing a comment
-    function handleEditComment(commentId) {
-        // Implement logic to edit the comment with the given commentId
-        console.log('Editing comment with ID:', commentId);
-        // This might involve setting the comment text in an input field for editing
-        // and updating the comment in the state and database on submission
-    }
-
-
-
-
     return (
         <div className='play-video'>
             {videoSrc && <video src={videoSrc} controls autoPlay muted></video>}
