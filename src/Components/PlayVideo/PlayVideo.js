@@ -93,30 +93,34 @@ function PlayVideo() {
         }
 
         async function fetchLogedInUserData() {
-            if (!(loggedInUser == 'null')) {
-                const db = await openDB('MeaTubeDB');
-                if (!db.objectStoreNames.contains('users')) {
-                    throw new Error("Object store 'users' does not exist.");
-                }
-                const transaction = db.transaction(["users"], "readonly");
-                const objectStore = transaction.objectStore("users");
-                const logedinUserdata = await objectStore.get(loggedInUser);
-                if (firstTimeToUpdateUserInteraction.current) {
-                    // Check if the user like or dislike the video and set the state variable only once
-                    if (logedinUserdata.likedVideos.includes(Number(videoId))) {
-                        setUserInteraction(LIKE);
-                    } else if (logedinUserdata.dislikedVideos.includes(Number(videoId))) {
-                        setUserInteraction(DISLIKE);
-                    } else {
-                        setUserInteraction(NONE);
+            try {
+                if (!(loggedInUser == 'null')) {
+                    const db = await openDB('MeaTubeDB');
+                    if (!db.objectStoreNames.contains('users')) {
+                        throw new Error("Object store 'users' does not exist.");
                     }
-                    if (logedinUserdata && logedinUserdata.image) {
-                        setlogedinUserImage(logedinUserdata.image);
+                    const transaction = db.transaction(["users"], "readonly");
+                    const objectStore = transaction.objectStore("users");
+                    const logedinUserdata = await objectStore.get(loggedInUser);
+                    if (firstTimeToUpdateUserInteraction.current) {
+                        // Check if the user like or dislike the video and set the state variable only once
+                        if (logedinUserdata.likedVideos.includes(Number(videoId))) {
+                            setUserInteraction(LIKE);
+                        } else if (logedinUserdata.dislikedVideos.includes(Number(videoId))) {
+                            setUserInteraction(DISLIKE);
+                        } else {
+                            setUserInteraction(NONE);
+                        }
+                        if (logedinUserdata && logedinUserdata.image) {
+                            setlogedinUserImage(logedinUserdata.image);
+                        }
+                        // setting the first load to false that insures that the views and likes will be updated only once
+                        firstTimeToUpdateUserInteraction.current = false;
+                        setUpdatingInteraction(false);
                     }
-                    // setting the first load to false that insures that the views and likes will be updated only once
-                    firstTimeToUpdateUserInteraction.current = false;
-                    setUpdatingInteraction(false);
                 }
+            } catch (e) {
+                console.error('Failed to fetch logged in user data:', e);
             }
         }
 
@@ -331,24 +335,6 @@ function PlayVideo() {
             console.error('Failed to add comment:', error);
         }
     }
-
-    // Event handler for deleting a comment
-    function handleDeleteComment(commentId) {
-        // Implement logic to delete the comment with the given commentId
-        console.log('Deleting comment with ID:', commentId);
-        // Update the state and UI accordingly
-    }
-
-    // Event handler for editing a comment
-    function handleEditComment(commentId) {
-        // Implement logic to edit the comment with the given commentId
-        console.log('Editing comment with ID:', commentId);
-        // This might involve setting the comment text in an input field for editing
-        // and updating the comment in the state and database on submission
-    }
-
-
-
 
     return (
         <div className='play-video'>
