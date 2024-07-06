@@ -101,7 +101,7 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
                     <Darkmode  handleChange={() => setIsChecked(prev => prev === false ? true : false)} />
                     <i className="bi bi-upload" onClick={() => navigate('/AddMovie')} ></i>
                     <i className="bi bi-bell"></i>
-                    {loggedInUser && <i class="bi bi-box-arrow-left" onClick={handleLogout}></i>}
+                    {loggedInUser && <i className="bi bi-box-arrow-left" onClick={handleLogout}></i>}
                     <img className='profile' src={profilePic} onClick={checkLoggedIUser} alt='profile-pic'/>
                 </div>
             </nav>
