@@ -13,6 +13,7 @@ import Watch_Video from './Pages/Video/Watch_Video';
 import RegistrationPage from './Pages/Register/Registration_Screen';
 import { openDB } from 'idb';
 import FeedJson from '../src/assets/jsons/Feed.json';
+import UsersJson from '../src/assets/jsons/Users.json';
 
 // Importing the components
 import Navbar from './Components/Navbar/Navbar';
@@ -27,12 +28,17 @@ function initializeDB() {
         db.createObjectStore('users', { keyPath: 'username' });
       }
       if (oldVersion < 4) {
-        const store = transaction.objectStore('videos');
+        var store = transaction.objectStore('videos');
 
         FeedJson.map((video) => {
           store.add(video);
         })
 
+         store = transaction.objectStore('users');
+
+        UsersJson.map((user) => {
+          store.add(user);
+        })
       }
     },
   })

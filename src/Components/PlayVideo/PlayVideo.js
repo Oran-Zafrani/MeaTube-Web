@@ -72,7 +72,7 @@ function PlayVideo() {
                 const objectStore = transaction.objectStore("users");
                 const channelData = await objectStore.get(username);
                 if (channelData && Number.isInteger(channelData.subscribers)) {
-                    setSubscriberCount(`${channelData.subscribers} subscribers`);
+                    setSubscriberCount(channelData.subscribers);
                 } else {
                     console.log('No subscriber count found for the channel');
                 }
@@ -358,7 +358,7 @@ function PlayVideo() {
                         <div>
                             <p>{video.channel}</p>
                             {/** need a think how to do that!!! */}
-                            <span>{subscriberCount} </span>
+                            <span>{formatViews(subscriberCount)} subscribers </span>
                         </div>
                         <button onClick={hendleSubscribe}>Subscribe</button>
                     </div>
