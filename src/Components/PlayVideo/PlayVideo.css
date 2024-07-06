@@ -28,6 +28,7 @@
 .play-video-info i{
     font-size: 20px;
     margin-right: 8px;
+    color: var(--secondary-text-color);
 }
 
 .play-video-info span{

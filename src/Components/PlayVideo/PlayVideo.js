@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { openDB } from 'idb';
 import './PlayVideo.css';
 import { formatViews, parseUploadTime } from '../../Components/Feed/VideoCard';
@@ -7,13 +7,12 @@ import defaultImage from '../../assets/images/guest_image.png';
 import { CommentCard } from './CommentCard';
 import { getVideos } from '../Feed/Feed';
 
-// Define your component or function here
 function PlayVideo() {
     const firstTimeToUpdateViews = useRef(true);
     const firstTimeToUpdateUserInteraction = useRef(true);
     const [videoSrc, setVideoSrc] = useState('');
     const { videoId } = useParams();
-    const [video, setVideo] = useState(null); // Add a new state variable for the video object
+    const [video, setVideo] = useState(null); 
     const [subscriberCount, setSubscriberCount] = useState('Loading...');
     const [uploadedUserImage, setUserImage] = useState(defaultImage);
     const [userInteraction, setUserInteraction] = useState(0);
@@ -336,6 +335,20 @@ function PlayVideo() {
         }
     }
 
+    // Render the edit button if the logged-in user is the video uploader
+    const renderEditButton = () => {
+        if (video && video.username === loggedInUser) {
+            return (
+                <Link to={`edit`} className='video-action-button' onClick={() => window.scrollTo(0, 0)}>
+                    <i className="bi bi-pencil-square"></i>
+                </Link>
+            );
+        }
+        return null;
+    };
+
+
+
     return (
         <div className='play-video'>
             {videoSrc && <video src={videoSrc} controls autoPlay muted></video>}
@@ -347,6 +360,7 @@ function PlayVideo() {
                     <div className='play-video-info'>
                         <p>{formatViews(video.views)} views &bull; {parseUploadTime(video.uploadTime)}</p>
                         <div >
+                            {renderEditButton()}
                             <span className={`video-action-button ${userInteraction === LIKE ? "bi bi-hand-thumbs-up-fill like-selected" : "bi bi-hand-thumbs-up-fill"}`} onClick={handleLike}>{formatViews(video.likes)}</span>
                             <span className={`video-action-button ${userInteraction === DISLIKE ? "bi bi-hand-thumbs-down-fill dislike-selected" : "bi bi-hand-thumbs-down-fill"}`} onClick={handleDislike}>{formatViews(video.dislikes)}</span>
                             <span className='video-action-button' onClick={handleShare}><i className="bi bi-share-fill"></i> Share</span>

@@ -1,8 +1,8 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Button, Form } from 'react-bootstrap';
-import { ThemeContext } from '../../Theme/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 import './Registration.css';
+
 
 function Registration() {
   const [username, setUsername] = useState("");
@@ -10,8 +10,8 @@ function Registration() {
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [image, setImage] = useState(null);
-  const { darkMode } = useContext(ThemeContext);
   const navigate = useNavigate();
+
 
   // Initialize IndexedDB
   useEffect(() => {

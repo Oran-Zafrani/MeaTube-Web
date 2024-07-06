@@ -11,9 +11,11 @@ import LoginPage from './Pages/Login/Login_Screen';
 import AddMoviePage from './Pages/AddVideo/Add_Video';
 import Watch_Video from './Pages/Video/Watch_Video';
 import RegistrationPage from './Pages/Register/Registration_Screen';
+import Edit_Video from './Pages/Edit_Video/Edit_Video';
 import { openDB } from 'idb';
 import FeedJson from '../src/assets/jsons/Feed.json';
 import UsersJson from '../src/assets/jsons/Users.json';
+
 
 // Importing the components
 import Navbar from './Components/Navbar/Navbar';
@@ -96,6 +98,7 @@ function App() {
                 <Route path="/MovieList" element={<Watch_Video />} />
                 <Route path="/Registration" element={<RegistrationPage />} />
                 <Route path="/watch/:videoId" element={<Watch_Video />} />
+                <Route path="/watch/:id/edit" element={<Edit_Video />} />
               </Routes>
             </div>
           </header>
