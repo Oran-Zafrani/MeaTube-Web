@@ -28,24 +28,11 @@ function initializeDB() {
       }
       if (oldVersion < 4) {
         const store = transaction.objectStore('videos');
-        const sampleVideo = {
-          title: 'Sample Video',
-          description: 'A random video for demonstration purposes',
-          category: 'Demo',
-          videoFile: 'sample.mp4',
-          previewImage: 'sample.jpg',
-          channel: 'Sample Channel',
-          uploadTime: new Date().toISOString(),
-          views: 0,
-          likes: 0,
-          dislikes: 0,
-          comments: 0,
-          commentsLink: [],
-        };
+
         FeedJson.map((video) => {
           store.add(video);
         })
-        store.add(sampleVideo);
+
       }
     },
   })
