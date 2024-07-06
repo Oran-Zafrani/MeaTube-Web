@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import logo from '../../assets/images/meatube_logo_with_text.png';
 import defaultProfilePic from '../../assets/images/guest_image.png'; 
 import './Navbar.css';
@@ -10,6 +10,19 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
     const navigate = useNavigate();
     const [profilePic, setProfilePic] = useState(defaultProfilePic); // State to manage profile picture
     const [searchString, setSearchString] = useState('');
+    const buttonRef = useRef(null);
+
+    useEffect(() => {
+        const handleKeyPress = (event) => {
+            if (event.key === 'Enter') {
+                buttonRef.current.click();
+            }
+        };
+        document.addEventListener('keydown', handleKeyPress);
+        return () => {
+            document.removeEventListener('keydown', handleKeyPress);
+        };
+    }, []);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -74,13 +87,13 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
             <nav className='flex-div'>
                 <div className='nav-left flex-div'>
                     <i className="bi bi-list" onClick={() => setSidebar(prev => prev === false ? true : false)}></i>
-                    <img className='logo' onClick={() => navigate('/')} src={logo} alt='logo'/>
+                    <img className='logo' onClick={() => {setSearch(''); navigate('/')}} src={logo} alt='logo'/>
                 </div>
 
                 <div className='nav-middle flex-div'>
                     <div className='search-box flex-div'>
                         <input type='text' value={searchString} onChange={handleInputChange} placeholder='Search' />
-                        <button type="submit" onClick={handleSearchSubmit}><i className="bi bi-search"></i></button>
+                        <button ref={buttonRef} type="submit" onClick={handleSearchSubmit}><i className="bi bi-search"></i></button>
                     </div>
                 </div>
 
@@ -88,7 +101,7 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
                     <Darkmode  handleChange={() => setIsChecked(prev => prev === false ? true : false)} />
                     <i className="bi bi-upload" onClick={() => navigate('/AddMovie')} ></i>
                     <i className="bi bi-bell"></i>
-                    {loggedInUser && <i class="bi bi-box-arrow-left" onClick={handleLogout}></i>}
+                    {loggedInUser && <i className="bi bi-box-arrow-left" onClick={handleLogout}></i>}
                     <img className='profile' src={profilePic} onClick={checkLoggedIUser} alt='profile-pic'/>
                 </div>
             </nav>

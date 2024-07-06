@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import './Feed.css';
-import FeedJson from '../../../src/assets/jsons/Feed.json';
 import VideoCard from './VideoCard';
 import { openDB } from 'idb';
 
@@ -42,6 +41,6 @@ export async function getVideos() {
   const tx = db.transaction('videos', 'readonly');
   const store = tx.objectStore('videos');
   const allVideos = await store.getAll();
-  return [...FeedJson, ...allVideos];
+  return allVideos;
 }
 export default Feed;

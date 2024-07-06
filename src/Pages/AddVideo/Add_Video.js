@@ -1,12 +1,10 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import { Button, Form } from 'react-bootstrap';
-import { ThemeContext } from '../../Theme/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 import { openDB } from 'idb';
 import './Add_Video.css';
 
 function AddMovie() {
-  const { darkMode } = useContext(ThemeContext);
   const navigate = useNavigate();
   const formRef = useRef();
 

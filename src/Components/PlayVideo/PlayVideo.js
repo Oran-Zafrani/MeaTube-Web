@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { openDB } from 'idb';
 import './PlayVideo.css';
-import { parseUploadTime } from '../../Components/Feed/VideoCard';
+import { formatViews, parseUploadTime } from '../../Components/Feed/VideoCard';
 import defaultImage from '../../assets/images/guest_image.png';
 import { CommentCard } from './CommentCard';
+import { getVideos } from '../Feed/Feed';
 
-// Define your component or function here
 function PlayVideo() {
     const firstTimeToUpdateViews = useRef(true);
     const firstTimeToUpdateUserInteraction = useRef(true);
     const [videoSrc, setVideoSrc] = useState('');
     const { videoId } = useParams();
-    const [video, setVideo] = useState(null); // Add a new state variable for the video object
+    const [video, setVideo] = useState(null); 
     const [subscriberCount, setSubscriberCount] = useState('Loading...');
     const [uploadedUserImage, setUserImage] = useState(defaultImage);
     const [userInteraction, setUserInteraction] = useState(0);
@@ -31,9 +31,7 @@ function PlayVideo() {
         async function fetchVideo() {
             try {
                 const db = await openDB('MeaTubeDB');
-                const tx = db.transaction('videos', 'readonly');
-                const store = tx.objectStore('videos');
-                const allVideos = await store.getAll();
+                const allVideos = await getVideos();
                 const video = allVideos.find(v => v.id === Number(videoId));
                 if (video && video.videoFile) {
                     setVideoSrc(video.videoFile);
@@ -73,7 +71,7 @@ function PlayVideo() {
                 const objectStore = transaction.objectStore("users");
                 const channelData = await objectStore.get(username);
                 if (channelData && Number.isInteger(channelData.subscribers)) {
-                    setSubscriberCount(`${channelData.subscribers} subscribers`);
+                    setSubscriberCount(channelData.subscribers);
                 } else {
                     console.log('No subscriber count found for the channel');
                 }
@@ -337,6 +335,20 @@ function PlayVideo() {
         }
     }
 
+    // Render the edit button if the logged-in user is the video uploader
+    const renderEditButton = () => {
+        if (video && video.username === loggedInUser) {
+            return (
+                <Link to={`edit`} className='video-action-button' onClick={() => window.scrollTo(0, 0)}>
+                    <i className="bi bi-pencil-square"></i>
+                </Link>
+            );
+        }
+        return null;
+    };
+
+
+
     return (
         <div className='play-video'>
             {videoSrc && <video src={videoSrc} controls autoPlay muted></video>}
@@ -346,10 +358,11 @@ function PlayVideo() {
                 <>
                     <h3>{video.title}</h3>
                     <div className='play-video-info'>
-                        <p>{video.views} views &bull; {parseUploadTime(video.uploadTime)}</p>
+                        <p>{formatViews(video.views)} views &bull; {parseUploadTime(video.uploadTime)}</p>
                         <div >
-                            <span className={`video-action-button ${userInteraction === LIKE ? "bi bi-hand-thumbs-up-fill like-selected" : "bi bi-hand-thumbs-up-fill"}`} onClick={handleLike}>{video.likes}</span>
-                            <span className={`video-action-button ${userInteraction === DISLIKE ? "bi bi-hand-thumbs-down-fill dislike-selected" : "bi bi-hand-thumbs-down-fill"}`} onClick={handleDislike}>{video.dislikes}</span>
+                            {renderEditButton()}
+                            <span className={`video-action-button ${userInteraction === LIKE ? "bi bi-hand-thumbs-up-fill like-selected" : "bi bi-hand-thumbs-up-fill"}`} onClick={handleLike}>{formatViews(video.likes)}</span>
+                            <span className={`video-action-button ${userInteraction === DISLIKE ? "bi bi-hand-thumbs-down-fill dislike-selected" : "bi bi-hand-thumbs-down-fill"}`} onClick={handleDislike}>{formatViews(video.dislikes)}</span>
                             <span className='video-action-button' onClick={handleShare}><i className="bi bi-share-fill"></i> Share</span>
                         </div>
                     </div>
@@ -359,7 +372,7 @@ function PlayVideo() {
                         <div>
                             <p>{video.channel}</p>
                             {/** need a think how to do that!!! */}
-                            <span>{subscriberCount} </span>
+                            <span>{formatViews(subscriberCount)} subscribers </span>
                         </div>
                         <button onClick={hendleSubscribe}>Subscribe</button>
                     </div>

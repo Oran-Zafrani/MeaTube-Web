@@ -11,7 +11,11 @@ import LoginPage from './Pages/Login/Login_Screen';
 import AddMoviePage from './Pages/AddVideo/Add_Video';
 import Watch_Video from './Pages/Video/Watch_Video';
 import RegistrationPage from './Pages/Register/Registration_Screen';
+import Edit_Video from './Pages/Edit_Video/Edit_Video';
 import { openDB } from 'idb';
+import FeedJson from '../src/assets/jsons/Feed.json';
+import UsersJson from '../src/assets/jsons/Users.json';
+
 
 // Importing the components
 import Navbar from './Components/Navbar/Navbar';
@@ -26,22 +30,17 @@ function initializeDB() {
         db.createObjectStore('users', { keyPath: 'username' });
       }
       if (oldVersion < 4) {
-        const store = transaction.objectStore('videos');
-        const sampleVideo = {
-          title: 'Sample Video',
-          description: 'A random video for demonstration purposes',
-          category: 'Demo',
-          videoFile: 'sample.mp4',
-          previewImage: 'sample.jpg',
-          channel: 'Sample Channel',
-          uploadTime: new Date().toISOString(),
-          views: 0,
-          likes: 0,
-          dislikes: 0,
-          comments: 0,
-          commentsLink: [],
-        };
-        store.add(sampleVideo);
+        var store = transaction.objectStore('videos');
+
+        FeedJson.map((video) => {
+          store.add(video);
+        })
+
+         store = transaction.objectStore('users');
+
+        UsersJson.map((user) => {
+          store.add(user);
+        })
       }
     },
   })
@@ -99,6 +98,7 @@ function App() {
                 <Route path="/MovieList" element={<Watch_Video />} />
                 <Route path="/Registration" element={<RegistrationPage />} />
                 <Route path="/watch/:videoId" element={<Watch_Video />} />
+                <Route path="/watch/:id/edit" element={<Edit_Video />} />
               </Routes>
             </div>
           </header>

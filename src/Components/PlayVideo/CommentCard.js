@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { parseUploadTime } from '../Feed/VideoCard';
+import { formatViews, parseUploadTime } from '../Feed/VideoCard';
 import { openDB } from 'idb';
+
 
 export const CommentCard = ({ comment, index, loggedInUser, videoId }) => {
     const [isEditMode, setIsEditMode] = useState(false);
@@ -74,7 +75,7 @@ export const CommentCard = ({ comment, index, loggedInUser, videoId }) => {
         <div className='comment' key={index}>
             <img src={comment.userImage} alt='commenter' className="commenter-image" />
             <div >
-                <h3>{comment.displayName} <span>{parseUploadTime(comment.timestamp)}</span></h3>
+                <h3>{comment.userName} <span>{parseUploadTime(comment.timestamp)}</span></h3>
                 { isEditMode ? (
                     <>
                     <div className='add-comment-container'>
@@ -87,9 +88,9 @@ export const CommentCard = ({ comment, index, loggedInUser, videoId }) => {
                 )}
                 <div className='comment-action'>
                     <i className="bi bi-hand-thumbs-up-fill" onClick={handleLike}></i>
-                    <span>0</span>
+                    <span>{formatViews(comment.likesNum)}</span>
                     <i className="bi bi-hand-thumbs-down-fill" onClick={handleDislike}></i>
-                    <span>0</span>
+                    <span>{formatViews(comment.dislikesNum)}</span>
                     {loggedInUser === comment.userName && (
                         <>
                             <i className="bi bi-pencil-square" onClick={handleEditComment} style={{ cursor: 'pointer' }}></i>
