@@ -21,6 +21,12 @@ function EditMovie() {
       try {
         const allVideos = await getVideos();
         const video = allVideos.find(v => v.id === Number(id));
+        // Check if the user is authorized to edit the video
+        if (video&&video.username!==localStorage.getItem('loggedInUser')) {
+          alert('You are not authorized to edit this video!');
+          navigate('/');
+        }
+
         if (video) {
           setTitle(video.title);
           setDescription(video.description);
