@@ -10,6 +10,7 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
     const navigate = useNavigate();
     const [profilePic, setProfilePic] = useState(defaultProfilePic); // State to manage profile picture
     const [searchString, setSearchString] = useState('');
+    const [displayName, setDisplayName] = useState('');
     const buttonRef = useRef(null);
 
     useEffect(() => {
@@ -37,6 +38,7 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
 
                 if (channelData && channelData.image) {
                     setProfilePic(channelData.image);
+                    setDisplayName(channelData.displayName);
                 } else {
                     console.log('No user data found for channel:', loggedInUser);
                     setProfilePic(defaultProfilePic);
@@ -97,6 +99,7 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
                     <i className="bi bi-upload" onClick={() => navigate('/AddMovie')} ></i>
                     <i className="bi bi-bell"></i>
                     {loggedInUser && <Link to="/login/"><i className="bi bi-box-arrow-left" onClick={handleLogout}></i></Link>}
+                    {loggedInUser &&  <p className='logged-in-quote'> Hi {displayName}!</p>}
                     <img className='profile' src={profilePic} onClick={checkLoggedIUser} alt='profile-pic'/>
                 </div>
             </nav>
