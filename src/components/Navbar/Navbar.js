@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import logo from '../../assets/images/meatube_logo_with_text.png';
 import defaultProfilePic from '../../assets/images/guest_image.png'; 
 import './Navbar.css';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { openDB } from 'idb';
 import Darkmode from './Darkmode';
 
@@ -64,11 +64,6 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
         setLoggedInUser(null); // Reset the logged in user
         localStorage.setItem('loggedInUser', 'null'); // Reset the logged in user
         setProfilePic(defaultProfilePic); // Reset profile picture to default on logout
-        // Refresh the page to reflect the changes
-        const refreshPage = () => {
-            window.location.reload();
-          };
-          refreshPage();
     };
 
     const handleSearchSubmit = (e) => {
@@ -101,7 +96,7 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
                     <Darkmode  handleChange={() => setIsChecked(prev => prev === false ? true : false)} />
                     <i className="bi bi-upload" onClick={() => navigate('/AddMovie')} ></i>
                     <i className="bi bi-bell"></i>
-                    {loggedInUser && <i className="bi bi-box-arrow-left" onClick={handleLogout}></i>}
+                    {loggedInUser && <Link to="/login/"><i className="bi bi-box-arrow-left" onClick={handleLogout}></i></Link>}
                     <img className='profile' src={profilePic} onClick={checkLoggedIUser} alt='profile-pic'/>
                 </div>
             </nav>
