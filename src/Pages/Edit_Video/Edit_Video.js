@@ -18,28 +18,26 @@ function EditMovie() {
 
   useEffect(() => {
     const fetchVideoData = async () => {
-      try {
-        const allVideos = await getVideos();
-        const video = allVideos.find(v => v.id === Number(id));
-        // Check if the user is authorized to edit the video
-        if (video&&video.username!==localStorage.getItem('loggedInUser')) {
-          alert('You are not authorized to edit this video!');
-          navigate('/');
-        }
 
-        if (video) {
-          setTitle(video.title);
-          setDescription(video.description);
-          setCategory(video.category);
-          setVideoFile(video.videoFile);
-          setPreviewImage(video.previewImage);
-        } else {
-          alert('Video not found!');
-          navigate('/');
-        }
-      } catch (error) {
-        console.error('Failed to fetch video data:', error);
+      const allVideos = await getVideos();
+      const video = allVideos.find(v => v.id === Number(id));
+      // Check if the user is authorized to edit the video
+      if (video && video.username !== localStorage.getItem('loggedInUser')) {
+        alert('You are not authorized to edit this video!');
+        navigate('/');
       }
+
+      if (video) {
+        setTitle(video.title);
+        setDescription(video.description);
+        setCategory(video.category);
+        setVideoFile(video.videoFile);
+        setPreviewImage(video.previewImage);
+      } else {
+        alert('Video not found!');
+        navigate('/');
+      }
+
     };
     fetchVideoData();
   }, [id, navigate]);

@@ -23,7 +23,7 @@ import Navbar from './Components/Navbar/Navbar';
 function initializeDB() {
   // Delete the database if it already exists
     var DBDeleteRequest = window.indexedDB.deleteDatabase("MeaTubeDB");
-    DBDeleteRequest.onerror = function (event) {
+    DBDeleteRequest.onerror = function () {
       console.log("Error deleting database.");
     };
   return openDB('MeaTubeDB', 4, {
