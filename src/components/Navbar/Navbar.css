@@ -59,6 +59,13 @@ nav{
     object-fit: cover; /* Ensures the image covers the area without stretching */
 }
 
+.nav-right .logged-in-quote {
+    margin-right: 25px;
+    color: var(--primary-text-color);
+    font-size: 16px;
+    font-weight: 500;
+}
+
 .bi-upload{
     cursor: pointer;
 }
