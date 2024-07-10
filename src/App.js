@@ -1,6 +1,6 @@
 // Importing necessary modules and components
 import './App.css';
-import React, { useState, useEffect  } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './Theme/ThemeProvider';
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -21,6 +21,11 @@ import UsersJson from '../src/assets/jsons/Users.json';
 import Navbar from './Components/Navbar/Navbar';
 
 function initializeDB() {
+  // Delete the database if it already exists
+    var DBDeleteRequest = window.indexedDB.deleteDatabase("MeaTubeDB");
+    DBDeleteRequest.onerror = function () {
+      console.log("Error deleting database.");
+    };
   return openDB('MeaTubeDB', 4, {
     upgrade(db, oldVersion, newVersion, transaction) {
       if (!db.objectStoreNames.contains('videos')) {
@@ -36,7 +41,7 @@ function initializeDB() {
           store.add(video);
         })
 
-         store = transaction.objectStore('users');
+        store = transaction.objectStore('users');
 
         UsersJson.map((user) => {
           store.add(user);
@@ -44,14 +49,14 @@ function initializeDB() {
       }
     },
   })
-  .then(db => {
-    console.log("Database initialized successfully");
-    return db; // Return db for further operations if needed
-  })
-  .catch(error => {
-    console.error("Database error: ", error);
-    throw error; // Rethrow or handle error as needed
-  });
+    .then(db => {
+      console.log("Database initialized successfully");
+      return db; // Return db for further operations if needed
+    })
+    .catch(error => {
+      console.error("Database error: ", error);
+      throw error; // Rethrow or handle error as needed
+    });
 }
 
 // The main App component
@@ -62,10 +67,12 @@ function App() {
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [dbInitialized, setDbInitialized] = useState(false);
 
+
   // Using the useEffect hook to set the loggedInUser to null when the app starts
   useEffect(() => {
     const init = async () => {
       localStorage.setItem('loggedInUser', null);
+
       await initializeDB();
       setDbInitialized(true);
     };
@@ -74,38 +81,38 @@ function App() {
 
   // If the database is not initialized, display a loading message
   if (!dbInitialized) {
-    return <div>Loading...</div>; 
+    return <div>Loading...</div>;
   }
 
   return (
     <div>
-    <ThemeProvider>
-      <Router>
-        <div className="App" data-theme={isDark ? "dark" : "light"}>
-          <header className="App-header">
-            <div className="App">
+      <ThemeProvider>
+        <Router>
+          <div className="App" data-theme={isDark ? "dark" : "light"}>
+            <header className="App-header">
+              <div className="App">
 
-              <div>
-                <Navbar setSidebar={setSidebar} setIsChecked={setIsDark} setSearch={setSearchString} loggedInUser={loggedInUser} setLoggedInUser={setLoggedInUser}/>
+                <div>
+                  <Navbar setSidebar={setSidebar} setIsChecked={setIsDark} setSearch={setSearchString} loggedInUser={loggedInUser} setLoggedInUser={setLoggedInUser} />
+                </div>
+                <Routes>
+                  {/* The Route for the Movie_View_Screen is set to the root path ("/") */}
+                  {/* This means that the Movie_View_Screen will be the first to render when the app starts */}
+                  <Route path="/" element={<Main sidebar={sidebar} searchString={searchString} />} />
+                  {/* Adding all the other pages */}
+                  <Route path="/Login" element={<LoginPage setLoggedIn={setLoggedInUser} />} />
+                  <Route path="/AddMovie" element={<AddMoviePage />} />
+                  <Route path="/MovieList" element={<Watch_Video />} />
+                  <Route path="/Registration" element={<RegistrationPage />} />
+                  <Route path="/watch/:videoId" element={<Watch_Video />} />
+                  <Route path="/watch/:id/edit" element={<Edit_Video />} />
+                </Routes>
               </div>
-              <Routes>
-                {/* The Route for the Movie_View_Screen is set to the root path ("/") */}
-                {/* This means that the Movie_View_Screen will be the first to render when the app starts */}
-                <Route path="/" element={<Main sidebar={sidebar} searchString={searchString} />} />
-                {/* Adding all the other pages */}
-                <Route path="/Login" element={<LoginPage setLoggedIn={setLoggedInUser}/>} />
-                <Route path="/AddMovie" element={<AddMoviePage />} />
-                <Route path="/MovieList" element={<Watch_Video />} />
-                <Route path="/Registration" element={<RegistrationPage />} />
-                <Route path="/watch/:videoId" element={<Watch_Video />} />
-                <Route path="/watch/:id/edit" element={<Edit_Video />} />
-              </Routes>
-            </div>
-          </header>
-          
-        </div>
-      </Router >
-    </ThemeProvider>
+            </header>
+
+          </div>
+        </Router >
+      </ThemeProvider>
     </div>
   );
 }

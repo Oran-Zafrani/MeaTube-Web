@@ -122,7 +122,7 @@ function Registration() {
 
         <Form.Group className="mb-4">
           <Form.Label className="block text-sm font-medium text-zinc">Password</Form.Label>
-          <Form.Control type="password" value={password} onChange={e => setPassword(e.target.value)} className="input-field" placeholder="Password" />
+          <Form.Control type="password" value={password} onChange={e => setPassword(e.target.value)} className="input-field" placeholder="Password Min 8 chars, with letters & numbers" />
         </Form.Group>
 
         <Form.Group className="mb-4">
