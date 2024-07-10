@@ -57,8 +57,10 @@ function Registration() {
       return;
     }
 
-    if (password.length < 8 || !/\d/.test(password) || !/[a-zA-Z]/.test(password)) {
-      alert("Password must be at least 8 characters long and contain both letters and numbers!");
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+      alert("Password is not too complex! please choose another password according to password details");
       return;
     }
 
@@ -119,7 +121,16 @@ function Registration() {
           <Form.Label className="block text-sm font-medium text-zinc">Display Name</Form.Label>
           <Form.Control type="text" value={displayName} onChange={e => setDisplayName(e.target.value)} className="input-field" placeholder="Enter display name" />
         </Form.Group>
-
+          <div className='password-desc'>
+            <p>Your password must meet the following criteria:</p> <br></br>
+            <ul>
+              <li>At least one lowercase letter</li>
+              <li>At least one uppercase letter</li>
+              <li>At least one digit</li>
+              <li>At least one special character (@$!%*?&)</li>
+              <li>Minimum length of 8 characters</li>
+            </ul>
+          </div>
         <Form.Group className="mb-4">
           <Form.Label className="block text-sm font-medium text-zinc">Password</Form.Label>
           <Form.Control type="password" value={password} onChange={e => setPassword(e.target.value)} className="input-field" placeholder="Password Min 8 chars, with letters & numbers" />

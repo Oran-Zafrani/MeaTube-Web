@@ -130,3 +130,9 @@
   font-size: 1.1rem;
   
 }
+
+.password-desc {
+  color: var(--secondary-text-color);
+  font-size: 16px;
+  margin: 16px;
+}
