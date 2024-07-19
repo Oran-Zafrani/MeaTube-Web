@@ -38,17 +38,17 @@ This will run the app in development mode. Open [http://localhost:3000](http://l
 
 ## Work Process
 1. Planning: We started by planning the project, defining requirements, and creating a basic interface design.
-2. Project Setup: We created the project using Create React App and added the necessary dependencies.
-3. Development:
+2. Task Management - We used Jira to manage tasks and track progress:
+  - Tasks were divided into sprints.
+  - Jira boards were utilized to visualize the workflow and status of each task.
+  - This ensured transparency and effective collaboration.
+3. Project Setup: We created the project using Create React App and added the necessary dependencies.
+4. Development:
   - Created basic components.
   - Added state management using React Hooks.
   - Integrated Bootstrap Icons to enhance the interface.
   - Maintained data representation consistency between android and web, for making the following work on server much fluent.
   - Added mock data to simulate representation on the website and android.
-4. Task Management - We used Jira to manage tasks and track progress:
-  - Tasks were divided into sprints.
-  - Jira boards were utilized to visualize the workflow and status of each task.
-  - This ensured transparency and effective collaboration.
 5. Data Storage:
   - Initially used local storage.
   - Faced limitations due to its 5 MB capacity.
