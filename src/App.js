@@ -109,7 +109,7 @@ function App() {
                   <Route path="/watch/:videoId" element={<Watch_Video />} />
                   <Route path="/watch/:id/edit" element={<Edit_Video />} />
                   <Route path="/Edit_User/:username" element={<Edit_User />} />
-                  <Route path="/User_Videos/:username" element={<User_Videos />} />
+                  <Route path="/User_Videos/:channel" element={<User_Videos />} />
                 </Routes>
               </div>
             </header>

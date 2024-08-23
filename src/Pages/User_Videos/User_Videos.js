@@ -6,21 +6,20 @@ import '../Main/Main.css';
 
 function User_Videos() {
   const [videos, setVideos] = useState([]);
-  const { username } = useParams();
+  const { channel } = useParams(); 
   const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchUserVideos() {
       const allVideos = await getVideos();
-      const userVideos = allVideos.filter(video => video.username === username);
+      const userVideos = allVideos.filter(video => video.channel === channel);
       setVideos(userVideos);
     }
 
     fetchUserVideos();
-  }, [username]);
+  }, [channel]);
 
   return (
-    <div>
       <div className='container'>
         <div className='feed'>
           {videos.map((video, key) => (
@@ -28,15 +27,6 @@ function User_Videos() {
           ))}
         </div>
       </div>
-
-      <div id="login">
-        <button onClick={() => navigate('/Login')}>Login</button>
-      </div>
-
-      <div id="AddMovie">
-        <button onClick={() => navigate('/AddMovie')}>AddMovie</button>
-      </div>
-    </div>
   );
 }
 
