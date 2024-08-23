@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { openDB } from 'idb';
 import './PlayVideo.css';
 import { formatViews, parseUploadTime } from '../../Components/Feed/VideoCard';
@@ -17,6 +17,7 @@ function PlayVideo() {
     const [uploadedUserImage, setUserImage] = useState(defaultImage);
     const [userInteraction, setUserInteraction] = useState(0);
     var loggedInUser = localStorage.getItem('loggedInUser');
+    const navigate = useNavigate();
 
     // Define constants for user interactions
     const NONE = 0, LIKE = 1, DISLIKE = 2;
@@ -368,9 +369,9 @@ function PlayVideo() {
                     </div>
                     <hr />
                     <div className='publisher'>
-                        <img src={uploadedUserImage} alt='publisher' />
+                        <img src={uploadedUserImage} alt='publisher' onClick={() => navigate(`/User_Videos/${displayName}`)} />
                         <div>
-                            <p>{video.channel}</p>
+                            <p style={{ cursor: 'pointer' }} onClick={() => navigate(`/User_Videos/${displayName}`)}>{video.channel} </p>
                             {/** need a think how to do that!!! */}
                             <span>{formatViews(subscriberCount)} subscribers </span>
                         </div>

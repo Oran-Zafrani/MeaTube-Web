@@ -6,27 +6,35 @@
     margin-top: 15px;
 }
 
-.card img{
+.card img {
     width: 100%;
     height: 56.25%;
     border-radius: 5px;
 }
 
-.card h2{
+.card h2 {
     font-size: 16px;
     font-weight: 600;
     color: var(--primary-text-color);
     margin: 5px 0;
 }
 
-.card h3{
+.card h3 {
     font-size: 14px;
     font-weight: 600;
     color: var(--secondary-text-color);
     margin: 6px 0;
 }
 
-.card p{
+.card p {
     font-size: 14px;
     color: var(--secondary-text-color);
+}
+
+.profileforvideocardspic {
+    width: 35px !important;
+    height: 35px !important; /* Ensures the height is equal to the width for a perfect circle */
+    margin-right: 10px;
+    border-radius: 50% !important; /* Makes the image circular */
+    object-fit: cover !important; /* Ensures the image covers the area without stretching */
 }
