@@ -12,6 +12,7 @@ import AddMoviePage from './Pages/AddVideo/Add_Video';
 import Watch_Video from './Pages/Video/Watch_Video';
 import RegistrationPage from './Pages/Register/Registration_Screen';
 import Edit_Video from './Pages/Edit_Video/Edit_Video';
+import Edit_User from './Pages/Edit_User/Edit_User';
 import { openDB } from 'idb';
 import FeedJson from '../src/assets/jsons/Feed.json';
 import UsersJson from '../src/assets/jsons/Users.json';
@@ -106,6 +107,7 @@ function App() {
                   <Route path="/Registration" element={<RegistrationPage />} />
                   <Route path="/watch/:videoId" element={<Watch_Video />} />
                   <Route path="/watch/:id/edit" element={<Edit_Video />} />
+                  <Route path="/Edit_User/:username" element={<Edit_User />} />
                 </Routes>
               </div>
             </header>

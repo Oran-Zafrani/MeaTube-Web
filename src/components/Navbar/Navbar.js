@@ -56,7 +56,7 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
         if (loggedInUser === 'null') {
             navigate('/Login');
         } else {
-            alert('User is already logged in');
+            navigate(`/Edit_User/${loggedInUser}`);
         }
     };
 
