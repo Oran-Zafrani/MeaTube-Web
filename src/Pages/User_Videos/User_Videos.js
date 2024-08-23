@@ -6,7 +6,8 @@ import '../Main/Main.css';
 
 function User_Videos() {
   const [videos, setVideos] = useState([]);
-  const { channel } = useParams(); 
+  const [user, setUser] = useState(null);
+  const { channel } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,8 +17,13 @@ function User_Videos() {
       setVideos(userVideos);
     }
 
+
     fetchUserVideos();
+
   }, [channel]);
+
+  const buttonClass = 'px-4 py-2 rounded';
+  const linkClass = 'text-muted-foreground hover:underline';
 
   return (
       <div className='container'>
@@ -37,5 +43,7 @@ async function getVideos() {
   const allVideos = await store.getAll();
   return allVideos;
 }
+
+
 
 export default User_Videos;
