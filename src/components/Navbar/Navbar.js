@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import logo from '../../assets/images/meatube_logo_with_text.png';
-import defaultProfilePic from '../../assets/images/guest_image.png'; 
+import defaultProfilePic from '../../assets/images/guest_image.png';
 import './Navbar.css';
 import { Link, useNavigate } from 'react-router-dom';
-import { openDB } from 'idb';
+import ServerAPI from '../../ServerAPI';
 import Darkmode from './Darkmode';
+import jwtDecode from 'jwt-decode';
 
 const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedInUser }) => {
     const navigate = useNavigate();
@@ -12,6 +13,8 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
     const [searchString, setSearchString] = useState('');
     const [displayName, setDisplayName] = useState('');
     const buttonRef = useRef(null);
+    const token = loggedInUser;
+    let username;
 
     useEffect(() => {
         const handleKeyPress = (event) => {
@@ -28,14 +31,9 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const db = await openDB('MeaTubeDB');
-                if (!db.objectStoreNames.contains('users')) {
-                    throw new Error("Object store 'users' does not exist.");
-                }
-                const transaction = db.transaction(["users"], "readonly");
-                const objectStore = transaction.objectStore("users");
-                const channelData = await objectStore.get(loggedInUser);
-
+                const decodedToken = jwtDecode(token);
+                username = decodedToken.username;
+                const channelData = await ServerAPI.getUserByUsername(username);
                 if (channelData && channelData.image) {
                     setProfilePic(channelData.image);
                     setDisplayName(channelData.displayName);
@@ -72,11 +70,11 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
         e.preventDefault(); // Prevent the default form submission
         setSearch(searchString); // Update the string state with the input value
         setSearchString(''); // Clear the input field after submission
-      };
-    
-      const handleInputChange = (e) => {
+    };
+
+    const handleInputChange = (e) => {
         setSearchString(e.target.value); // Update the input value as the user types
-      };
+    };
 
     return (
         <div>
@@ -84,7 +82,7 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
             <nav className='flex-div'>
                 <div className='nav-left flex-div'>
                     <i className="bi bi-list" onClick={() => setSidebar(prev => prev === false ? true : false)}></i>
-                    <img className='logo' onClick={() => {setSearch(''); navigate('/')}} src={logo} alt='logo'/>
+                    <img className='logo' onClick={() => { setSearch(''); navigate('/') }} src={logo} alt='logo' />
                 </div>
 
                 <div className='nav-middle flex-div'>
@@ -95,12 +93,12 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
                 </div>
 
                 <div className='nav-right flex-div'>
-                    <Darkmode  handleChange={() => setIsChecked(prev => prev === false ? true : false)} />
+                    <Darkmode handleChange={() => setIsChecked(prev => prev === false ? true : false)} />
                     <i className="bi bi-upload" onClick={() => navigate('/AddMovie')} ></i>
                     <i className="bi bi-bell"></i>
                     {loggedInUser && <Link to="/login/"><i className="bi bi-box-arrow-left" onClick={handleLogout}></i></Link>}
-                    {loggedInUser &&  <p className='logged-in-quote'> Hi {displayName}!</p>}
-                    <img className='profile' src={profilePic} onClick={checkLoggedIUser} alt='profile-pic'/>
+                    {loggedInUser && <p className='logged-in-quote'> Hi {displayName}!</p>}
+                    <img className='profile' src={profilePic} onClick={checkLoggedIUser} alt='profile-pic' />
                 </div>
             </nav>
         </div>
