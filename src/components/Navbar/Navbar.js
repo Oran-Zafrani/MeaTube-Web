@@ -50,7 +50,7 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
     }, [loggedInUser]);
 
     const checkLoggedIUser = () => {
-        const loggedInUser = localStorage.getItem('loggedInUser');
+        const loggedInUser = localStorage.getItem('loggedInUserToken');
         if (loggedInUser === 'null') {
             navigate('/Login');
         } else {
@@ -62,7 +62,7 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
     const handleLogout = () => {
         // Perform logout operations...
         setLoggedInUser(null); // Reset the logged in user
-        localStorage.setItem('loggedInUser', 'null'); // Reset the logged in user
+        localStorage.setItem('loggedInUserToken', 'null'); // Reset the logged in user
         setProfilePic(defaultProfilePic); // Reset profile picture to default on logout
     };
 

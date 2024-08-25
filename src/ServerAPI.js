@@ -89,9 +89,13 @@ class ServerAPI {
     }
   }
 
-  static async addVideo(videoData) {
+  static async addVideo(videoData, token) {
     try {
-      const response = await axios.post('/api/videos', videoData);
+      const response = await axios.post('/api/videos', videoData, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       return response.data;
     } catch (error) {
       console.error('Error adding video:', error);
