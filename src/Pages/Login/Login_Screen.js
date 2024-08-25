@@ -21,7 +21,7 @@ function Login({ setLoggedIn }) {
     try {
       const response = await ServerAPI.login(username, password);
       localStorage.setItem('loggedInUserToken', response.token);
-      setLoggedIn(username);
+      setLoggedIn(response.token);
       alert('User logged in successfully');
       // Navigate to home page
       navigate('/');

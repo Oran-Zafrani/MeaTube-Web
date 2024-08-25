@@ -5,7 +5,7 @@ import './Navbar.css';
 import { Link, useNavigate } from 'react-router-dom';
 import ServerAPI from '../../ServerAPI';
 import Darkmode from './Darkmode';
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedInUser }) => {
     const navigate = useNavigate();

@@ -29,19 +29,6 @@ function App() {
   const [loggedInUser, setLoggedInUser] = useState(null);
 
   // Using the useEffect hook to fetch videos from the server when the component mounts
-  useEffect(() => {
-    const fetchVideos = async () => {
-      try {
-        const data = await ServerAPI.getTop20Videos();
-        FeedJson.map(data);
-      } catch (error) {
-        console.error('Error fetching videos:', error);
-      }
-    };
-
-    fetchVideos();
-  }, []);
-
   return (
     <div>
       <ThemeProvider>
