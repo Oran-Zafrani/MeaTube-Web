@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { openDB } from 'idb';
+import ServerAPI from '../../ServerAPI';
 import './Feed.css';
 
 const VideoCard = ({ vidCard }) => {
@@ -10,7 +10,8 @@ const VideoCard = ({ vidCard }) => {
 
   useEffect(() => {
     const fetchUserImage = async () => {
-      const image = await getUserImage(video.username);
+      const user = await ServerAPI.getUserByUsername(video.username);
+      const image = user.image;
       if (image) {
         setUserImage(image);
       }
@@ -28,7 +29,7 @@ const VideoCard = ({ vidCard }) => {
         <img src={userImage} onClick={() => navigate(`/User_Videos/${video.channel}`)} style={{ cursor: 'pointer' }} alt='profileforvideocardspic' className="profileforvideocardspic" />
         <div>
           <h3 onClick={() => navigate(`/User_Videos/${video.channel}`)} style={{ cursor: 'pointer' }}> {video.channel} </h3>
-          <p>{formatViews(video.views)} &bull; {parseUploadTime(video.uploadTime)}</p>
+          <p>{formatViews(video.views)} Views &bull; {parseUploadTime(video.uploadTime)}</p>
         </div>
       </div>
     </div>
@@ -43,23 +44,6 @@ export function formatViews(views) {
   });
 
   return formatter.format(views);
-}
-
-async function getUserImage(username) {
-  const db = await openDB('MeaTubeDB');
-  if (!db.objectStoreNames.contains('users')) {
-    console.log("Object store 'users' does not exist in getUserImage. in video card");
-    return;
-  }
-  const transaction = db.transaction(["users"], "readonly");
-  const objectStore = transaction.objectStore("users");
-  const channelData = await objectStore.get(username);
-  if (channelData && channelData.image) {
-    return channelData.image;
-  } else {
-    console.log('No image found for the channel in getUserImage. in video card');
-    return;
-  }
 }
 
 // Define a function to parse the upload time: TIME FORMAT IS ISO 8601

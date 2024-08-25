@@ -6,7 +6,6 @@ import './Main.css';
 
 function Main({sidebar, searchString}) {
     const navigate = useNavigate();
-
     return (
         <div>
             <>

@@ -4,6 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './Theme/ThemeProvider';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import ServerAPI from './ServerAPI';
+import FeedJson from '../src/assets/jsons/Feed.json';
+import UsersJson from '../src/assets/jsons/Users.json';
 
 // Importing the pages
 import Main from './Pages/Main/Main';
@@ -14,52 +17,9 @@ import RegistrationPage from './Pages/Register/Registration_Screen';
 import Edit_Video from './Pages/Edit_Video/Edit_Video';
 import Edit_User from './Pages/Edit_User/Edit_User';
 import User_Videos from './Pages/User_Videos/User_Videos';
-import { openDB } from 'idb';
-import FeedJson from '../src/assets/jsons/Feed.json';
-import UsersJson from '../src/assets/jsons/Users.json';
-
 
 // Importing the components
 import Navbar from './Components/Navbar/Navbar';
-
-function initializeDB() {
-  // Delete the database if it already exists
-    var DBDeleteRequest = window.indexedDB.deleteDatabase("MeaTubeDB");
-    DBDeleteRequest.onerror = function () {
-      console.log("Error deleting database.");
-    };
-  return openDB('MeaTubeDB', 4, {
-    upgrade(db, oldVersion, newVersion, transaction) {
-      if (!db.objectStoreNames.contains('videos')) {
-        db.createObjectStore('videos', { keyPath: 'id', autoIncrement: true });
-      }
-      if (!db.objectStoreNames.contains('users')) {
-        db.createObjectStore('users', { keyPath: 'username' });
-      }
-      if (oldVersion < 4) {
-        var store = transaction.objectStore('videos');
-
-        FeedJson.map((video) => {
-          store.add(video);
-        })
-
-        store = transaction.objectStore('users');
-
-        UsersJson.map((user) => {
-          store.add(user);
-        })
-      }
-    },
-  })
-    .then(db => {
-      console.log("Database initialized successfully");
-      return db; // Return db for further operations if needed
-    })
-    .catch(error => {
-      console.error("Database error: ", error);
-      throw error; // Rethrow or handle error as needed
-    });
-}
 
 // The main App component
 function App() {
@@ -67,24 +27,20 @@ function App() {
   const [isDark, setIsDark] = useState(false);
   const [searchString, setSearchString] = useState(null);
   const [loggedInUser, setLoggedInUser] = useState(null);
-  const [dbInitialized, setDbInitialized] = useState(false);
 
-
-  // Using the useEffect hook to set the loggedInUser to null when the app starts
+  // Using the useEffect hook to fetch videos from the server when the component mounts
   useEffect(() => {
-    const init = async () => {
-      localStorage.setItem('loggedInUser', null);
-
-      await initializeDB();
-      setDbInitialized(true);
+    const fetchVideos = async () => {
+      try {
+        const data = await ServerAPI.getTop20Videos();
+        FeedJson.map(data);
+      } catch (error) {
+        console.error('Error fetching videos:', error);
+      }
     };
-    init();
-  }, []);
 
-  // If the database is not initialized, display a loading message
-  if (!dbInitialized) {
-    return <div>Loading...</div>;
-  }
+    fetchVideos();
+  }, []);
 
   return (
     <div>
