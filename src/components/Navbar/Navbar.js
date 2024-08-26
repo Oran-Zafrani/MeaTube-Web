@@ -50,13 +50,23 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
     }, [loggedInUser]);
 
     const checkLoggedIUser = () => {
-        const loggedInUser = localStorage.getItem('loggedInUserToken');
-        if (loggedInUser === null || loggedInUser === 'null') {
-            navigate('/Login');
-        } else {
-            const decodedToken = jwtDecode(token);
-            username = decodedToken.username;
-            navigate(`/Edit_User/${username}`);
+        try {
+            const loggedInUser = localStorage.getItem('loggedInUserToken');
+            if (loggedInUser === null || loggedInUser === 'null') {
+                navigate('/Login');
+            } else {
+                const decodedToken = jwtDecode(token);
+                username = decodedToken.username;
+                navigate(`/Edit_User/${username}`);
+            }
+        } catch (error) {
+            // after the token expires, the user will be logged out
+            console.log('this is the eror', error);
+            if (error.message === 'InvalidTokenError') {
+                localStorage.setItem('loggedInUserToken', 'null');
+            }
+            console.error('Error fetching user data:', error);
+            alert('Failed to fetch user data.');
         }
     };
 
