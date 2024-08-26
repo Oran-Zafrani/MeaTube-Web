@@ -1,47 +1,69 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import VideoCard from '../../Components/Feed/VideoCard';
+import {  useParams } from 'react-router-dom';
+import VideoCard, { formatViews } from '../../Components/Feed/VideoCard';
 import ServerAPI from '../../ServerAPI';
 import '../Main/Main.css';
+import './User_Videos.css';
 
 function User_Videos() {
   const [videos, setVideos] = useState([]);
+  const [userInfo, setUserInfo] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const { channel } = useParams();
-  const [ Channel, setChannel ] = useParams();
-  const navigate = useNavigate();
 
   useEffect(() => {
-    async function fetchUserVideos() {
-      const allVideos = await getVideos();
-      const userVideos = allVideos.filter(video => video.channel === channel);
-      setVideos(userVideos);
+    async function fetchUserData() {
+      try {
+        setLoading(true);
+        const user = await ServerAPI.getUserByChannelName(channel);
+        const allVideos = await ServerAPI.getVideosByUsername(user.username);
+        const userVideos = allVideos.filter(video => video.channel === channel);
+        
+        setUserInfo({
+          displayName: user.displayName,
+          subscribers: user.subscribers,
+          videoCount: userVideos.length,
+          image: user.image
+        });
+        setVideos(userVideos);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
     }
 
-
-    fetchUserVideos();
-
+    fetchUserData();
   }, [channel]);
 
-  const buttonClass = 'px-4 py-2 rounded';
-  const linkClass = 'text-muted-foreground hover:underline';
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
-      <div className='container'>
-        <div className='feed'>
-          {videos.map((video, key) => (
-            <VideoCard key={key} vidCard={video} />
-          ))}
+    <div className='container'>
+      <div className="flex items-center mb-4">
+        <img src={userInfo.image || "https://placehold.co/80x80"} alt="Channel Logo" className="channel-logo" />
+        <div>
+          <h1 className="text-primary">{userInfo.displayName}</h1>
+          <p className="text-muted">{formatViews(userInfo.subscribers)} subscribers | {userInfo.videoCount} videos</p>
         </div>
       </div>
+      <div className="mt-4">
+        <hr className="full-width-line" />
+      </div>
+      <div className='feed'>
+        {videos.map((video, key) => (
+          <VideoCard key={key} vidCard={video} />
+        ))}
+      </div>
+    </div>
   );
 }
-
-async function getVideos() {
-  const user = await ServerAPI.getus;
-  const allVideos = await ServerAPI.getVideosByUsername();
-  return allVideos;
-}
-
-
 
 export default User_Videos;
