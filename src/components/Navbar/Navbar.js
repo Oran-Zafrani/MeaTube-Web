@@ -61,10 +61,7 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
             }
         } catch (error) {
             // after the token expires, the user will be logged out
-            console.log('this is the eror', error);
-            if (error.message === 'InvalidTokenError') {
-                localStorage.setItem('loggedInUserToken', 'null');
-            }
+            localStorage.setItem('loggedInUserToken', 'null');
             console.error('Error fetching user data:', error);
             alert('Failed to fetch user data.');
         }
