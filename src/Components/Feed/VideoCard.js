@@ -10,10 +10,15 @@ const VideoCard = ({ vidCard }) => {
 
   useEffect(() => {
     const fetchUserImage = async () => {
-      const user = await ServerAPI.getUserByUsername(video.username);
-      const image = user.image;
-      if (image) {
-        setUserImage(image);
+      try {
+        const user = await ServerAPI.getUserByUsername(video.username);
+        const image = user.image;
+        if (image) {
+          setUserImage(image);
+        }
+      } catch (error) {
+        console.error('Error fetching user image:', error);
+        // Optionally, you can set an error state or a default image here
       }
     };
     fetchUserImage();
