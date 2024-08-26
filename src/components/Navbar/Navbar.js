@@ -51,10 +51,12 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
 
     const checkLoggedIUser = () => {
         const loggedInUser = localStorage.getItem('loggedInUserToken');
-        if (loggedInUser === 'null') {
+        if (loggedInUser === null || loggedInUser === 'null') {
             navigate('/Login');
         } else {
-            navigate(`/Edit_User/${loggedInUser}`);
+            const decodedToken = jwtDecode(token);
+            username = decodedToken.username;
+            navigate(`/Edit_User/${username}`);
         }
     };
 
@@ -64,6 +66,7 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
         setLoggedInUser(null); // Reset the logged in user
         localStorage.setItem('loggedInUserToken', 'null'); // Reset the logged in user
         setProfilePic(defaultProfilePic); // Reset profile picture to default on logout
+        navigate('/'); // Redirect to the home page after logout
     };
 
     const handleSearchSubmit = (e) => {

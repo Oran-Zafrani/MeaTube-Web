@@ -28,6 +28,15 @@ function App() {
   const [searchString, setSearchString] = useState(null);
   const [loggedInUser, setLoggedInUser] = useState(null);
 
+  useEffect(() => {
+    // make sure that localStorage has loggedInUserToken key
+    try {
+      const token = localStorage.getItem('loggedInUserToken');
+    } catch (error) {
+      localStorage.setItem('loggedInUserToken', 'null');
+    }
+  }, []);
+
   // Using the useEffect hook to fetch videos from the server when the component mounts
   return (
     <div>

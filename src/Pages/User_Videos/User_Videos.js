@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import VideoCard from '../../Components/Feed/VideoCard';
-import { openDB } from 'idb';
+import ServerAPI from '../../ServerAPI';
 import '../Main/Main.css';
 
 function User_Videos() {
@@ -37,10 +37,8 @@ function User_Videos() {
 }
 
 async function getVideos() {
-  const db = await openDB('MeaTubeDB');
-  const tx = db.transaction('videos', 'readonly');
-  const store = tx.objectStore('videos');
-  const allVideos = await store.getAll();
+
+  const allVideos = await ServerAPI.getVideosByUsername();
   return allVideos;
 }
 

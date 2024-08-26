@@ -39,19 +39,27 @@ class ServerAPI {
     }
   }
 
-  static async updateUser(username, userData) {
+  static async updateUser(username, updatedUserData, token) {
     try {
-      const response = await axios.put(`/api/users/${username}`, userData);
+      const response = await axios.put(`/api/users/${username}`, updatedUserData, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       return response.data;
     } catch (error) {
       console.error('Error updating user:', error);
       throw error;
     }
   }
-
-  static async deleteUser(username) {
+  
+  static async deleteUser(username, token) {
     try {
-      const response = await axios.delete(`/api/users/${username}`);
+      const response = await axios.delete(`/api/users/${username}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       return response.data;
     } catch (error) {
       console.error('Error deleting user:', error);

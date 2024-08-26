@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
-import { openDB } from 'idb';
+import ServerAPI from '../../ServerAPI';
 import './Edit_User.css';
+import navbar from '../../Components/Navbar/Navbar';
 
 function EditUser() {
   const { username } = useParams();
@@ -11,23 +12,25 @@ function EditUser() {
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [image, setImage] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const formRef = useRef();
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const db = await openDB('MeaTubeDB');
-      const tx = db.transaction('users', 'readonly');
-      const store = tx.objectStore('users');
-      const user = await store.get(username);
-
-      if (user) {
-        setPassword(user.password);
-        setDisplayName(user.displayName);
-        setImage(user.image);
-      } else {
-        alert('User not found!');
-        navigate('/');
+      try {
+        const user = await ServerAPI.getUserByUsername(username);
+        if (user) {
+          setPassword(user.password);
+          setDisplayName(user.displayName);
+          setImage(user.image);
+        } else {
+          alert('User not found!');
+          navigate('/');
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        alert('Failed to fetch user data.');
       }
     };
     fetchUserData();
@@ -46,70 +49,84 @@ function EditUser() {
     }
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const validateToken = () => {
+    const token = localStorage.getItem('loggedInUserToken');
+    if (!token || token === 'null') {
+      alert('User is not logged in, please login first!');
+      navigate('/login');
+      return null;
+    }
+    return token;
+  };
 
+  const validateForm = () => {
     if (!password || !passwordConfirmation || !displayName || !image) {
       alert('All fields must be filled out!');
-      return;
+      return false;
     }
 
     if (password !== passwordConfirmation) {
       alert('Passwords do not match!');
-      return;
+      return false;
     }
 
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
     if (!passwordRegex.test(password)) {
       alert('Password is not complex enough! Please choose another password according to password details.');
-      return;
+      return false;
     }
 
+    return true;
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!validateForm()) return;
+
+    const token = validateToken();
+    if (!token) return;
+
+    setLoading(true);
+
     try {
-      const db = await openDB('MeaTubeDB');
-      const tx = db.transaction('users', 'readwrite');
-      const store = tx.objectStore('users');
-      const existingUserData = await store.get(username);
-
-      if (!existingUserData) {
-        alert('User not found.');
-        return;
-      }
-
       const updatedUserData = {
-        ...existingUserData,
+        username,
         password,
         displayName,
         image,
       };
 
-      await store.put(updatedUserData);
-      await tx.complete;
+      await ServerAPI.updateUser(username, updatedUserData, token);
       alert('User updated successfully!');
-      navigate(`/profile/${username}`, { replace: true });
+      navigate('/');
+      navbar();
     } catch (error) {
       console.error('Could not update the user:', error);
+      alert('Failed to update user, please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleDelete = async () => {
+    const token = validateToken();
+    if (!token) return;
+
+    setLoading(true);
+
     try {
-      await deleteUser(username);
+      await ServerAPI.deleteUser(username, token);
       alert('User deleted successfully!');
       navigate('/');
     } catch (error) {
       console.error('Could not delete the user:', error);
+      alert('Failed to delete user, please try again.');
+    } finally {
+      setLoading(false);
     }
   };
-
-  async function deleteUser(username) {
-    const db = await openDB('MeaTubeDB');
-    const tx = db.transaction('users', 'readwrite');
-    const store = tx.objectStore('users');
-    await store.delete(username);
-    await tx.complete;
-  }
 
   return (
     <div className={`min-h-screen flex items-center justify-center bg-zinc-100 dark:bg-zinc-900 `}>
@@ -136,9 +153,9 @@ function EditUser() {
             <Form.Control type="file" accept="image/*" onChange={handleImageChange} className="input-field" />
           </Form.Group>
           <div className="flex justify-end">
-            <Button variant="primary" onClick={handleDelete} className="submit-button">Delete</Button>
-            <Button variant="primary" onClick={() => navigate(-1)} className="submit-button">Back</Button>
-            <Button variant="primary" type="submit" className="submit-button">Update User</Button>
+            <Button variant="primary" onClick={handleDelete} className="submit-button" disabled={loading}>Delete</Button>
+            <Button variant="primary" onClick={() => navigate(-1)} className="submit-button" disabled={loading}>Back</Button>
+            <Button variant="primary" type="submit" className="submit-button" disabled={loading}>Update User</Button>
           </div>
         </div>
       </Form>
