@@ -6,8 +6,8 @@ import '../Main/Main.css';
 
 function User_Videos() {
   const [videos, setVideos] = useState([]);
-  const [user, setUser] = useState(null);
   const { channel } = useParams();
+  const [ Channel, setChannel ] = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,7 +37,7 @@ function User_Videos() {
 }
 
 async function getVideos() {
-
+  const user = await ServerAPI.getus;
   const allVideos = await ServerAPI.getVideosByUsername();
   return allVideos;
 }

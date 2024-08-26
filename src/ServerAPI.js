@@ -29,6 +29,16 @@ class ServerAPI {
     }
   }
 
+  static async getUserByChannelName(channelName) {
+    try {
+      const response = await axios.get(`/api/users/channel/${channelName}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching user by channel name:', error);
+      throw error;
+    }
+  }
+
   static async createUser(userData) {
     try {
       const response = await axios.post('/api/users', userData);
