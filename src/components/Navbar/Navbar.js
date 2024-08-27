@@ -31,7 +31,7 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const decodedToken = jwtDecode(token);
+                const decodedToken = jwtDecode(localStorage.getItem('loggedInUserToken'));
                 username = decodedToken.username;
                 const channelData = await ServerAPI.getUserByUsername(username);
                 if (channelData && channelData.image) {
@@ -42,14 +42,17 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
                     setProfilePic(defaultProfilePic);
                 }
             } catch (error) {
+                setLoggedInUser(null);
                 setProfilePic(defaultProfilePic);
+                setDisplayName(null);
             }
         };
 
         fetchUserData();
-    }, [loggedInUser]);
+    }, [loggedInUser, localStorage.getItem('loggedInUserToken')]);
 
     const checkLoggedIUser = () => {
+        try {
         const loggedInUser = localStorage.getItem('loggedInUserToken');
         if (loggedInUser === null || loggedInUser === 'null') {
             navigate('/Login');
@@ -57,6 +60,9 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
             const decodedToken = jwtDecode(token);
             username = decodedToken.username;
             navigate(`/Edit_User/${username}`);
+        }} catch (error) {
+            localStorage.setItem('loggedInUserToken', 'null');
+            navigate('/Login');
         }
     };
 
@@ -99,7 +105,7 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
                     <Darkmode handleChange={() => setIsChecked(prev => prev === false ? true : false)} />
                     <i className="bi bi-upload" onClick={() => navigate('/AddMovie')} ></i>
                     <i className="bi bi-bell"></i>
-                    {loggedInUser && <Link to="/login/"><i className="bi bi-box-arrow-left" onClick={handleLogout}></i></Link>}
+                    {loggedInUser && <Link to="/"><i className="bi bi-box-arrow-left" onClick={handleLogout}></i></Link>}
                     {loggedInUser && <p className='logged-in-quote'> Hi {displayName}!</p>}
                     <img className='profile' src={profilePic} onClick={checkLoggedIUser} alt='profile-pic' />
                 </div>

@@ -55,8 +55,9 @@ class ServerAPI {
         headers: {
           Authorization: `Bearer ${token}`
         }
-      });
-      return response.data;
+      }); //CHECK THIS TO RETURN TOKEN ON SERVER SIDE
+      localStorage.setItem('loggedInUserToken', response.data.token);
+      return response.data.updatedUser;
     } catch (error) {
       console.error('Error updating user:', error);
       throw error;
@@ -70,6 +71,9 @@ class ServerAPI {
           Authorization: `Bearer ${token}`
         }
       });
+      if (response.status === 200) {
+        localStorage.setItem('loggedInUserToken', 'null');
+      }
       return response.data;
     } catch (error) {
       console.error('Error deleting user:', error);
