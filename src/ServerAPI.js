@@ -123,7 +123,12 @@ class ServerAPI {
 
   static async deleteVideoById(id) {
     try {
-      const response = await axios.delete(`/api/videos/${id}`);
+      const token = localStorage.getItem('loggedInUserToken');
+      const response = await axios.delete(`/api/videos/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       return response.data;
     } catch (error) {
       console.error('Error deleting video by ID:', error);
@@ -133,7 +138,12 @@ class ServerAPI {
 
   static async updateVideo(id, videoData) {
     try {
-      const response = await axios.put(`/api/videos/${id}`, videoData);
+      const token = localStorage.getItem('loggedInUserToken');
+      const response = await axios.put(`/api/videos/${id}`, videoData, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       return response.data;
     } catch (error) {
       console.error('Error updating video:', error);
