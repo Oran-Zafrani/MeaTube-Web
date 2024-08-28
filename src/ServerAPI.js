@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import { jwtDecode } from 'jwt-decode';
 // Set the base URL for axios
 axios.defaults.baseURL = 'http://localhost:8080'; // Include the protocol (http://)
 
@@ -12,6 +12,8 @@ class ServerAPI {
         username,
         password
       });
+      localStorage.setItem('loggedInUserToken', response.token);
+      localStorage.setItem('loggedInUserDetails', jwtDecode(response.token));
       return response.data;
     } catch (error) {
       console.error('Error logging in:', error);
@@ -57,6 +59,8 @@ class ServerAPI {
         }
       }); //CHECK THIS TO RETURN TOKEN ON SERVER SIDE
       localStorage.setItem('loggedInUserToken', response.data.token);
+      localStorage.setItem('loggedInUserDetails', jwtDecode(response.data.token));
+
       return response.data.updatedUser;
     } catch (error) {
       console.error('Error updating user:', error);
@@ -73,6 +77,7 @@ class ServerAPI {
       });
       if (response.status === 200) {
         localStorage.setItem('loggedInUserToken', 'null');
+        localStorage.setItem('loggedInUserDetails', 'null');
       }
       return response.data;
     } catch (error) {

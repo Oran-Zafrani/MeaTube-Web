@@ -1,15 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { openDB } from 'idb';
 import './PlayVideo.css';
 import { formatViews, parseUploadTime } from '../../Components/Feed/VideoCard';
 import defaultImage from '../../assets/images/guest_image.png';
 import { CommentCard } from './CommentCard';
-import { getVideos } from '../Feed/Feed';
+import ServerAPI from '../../ServerAPI';
 
 function PlayVideo() {
-    const firstTimeToUpdateViews = useRef(true);
-    const firstTimeToUpdateUserInteraction = useRef(true);
     const [videoSrc, setVideoSrc] = useState('');
     const { videoId } = useParams();
     const [video, setVideo] = useState(null); 
@@ -21,39 +18,27 @@ function PlayVideo() {
 
     // Define constants for user interactions
     const NONE = 0, LIKE = 1, DISLIKE = 2;
-    // updatingInteraction state variable to prevent rapid successive updates
-    const [updatingInteraction, setUpdatingInteraction] = useState(true);
+
     const [logedinUserImage, setlogedinUserImage] = useState(defaultImage);
     const [displayName, setDisplayName] = useState('');
-    const [comment, setComment] = useState('');
+    const [newComment, setNewComment] = useState('');
     const [comments, setComments] = useState([]);
-
+    var videoDetails = null;
     useEffect(() => {
         async function fetchVideo() {
             try {
-                const db = await openDB('MeaTubeDB');
-                const allVideos = await getVideos();
-                const video = allVideos.find(v => v.id === Number(videoId));
-                if (video && video.videoFile) {
-                    setVideoSrc(video.videoFile);
+                videoDetails = await ServerAPI.getVideoById(videoId);
+                if (videoDetails && videoDetails.videoFile) {
+                    setVideoSrc(videoDetails.videoFile);
                     // Update the video state variable
-                    setVideo(video);
+                    setVideo(videoDetails);
 
-                    if (video && video.commentsLink) {
-                        setComments(video.commentsLink);
+                    if (videoDetails && videoDetails.comments) {
+                        setComments(videoDetails.comments);
                     }
 
-                    // Increment the view count
-                    if (firstTimeToUpdateViews.current) {
-                        video.views = (video.views || 0) + 1;
+                    // Increment the view count - WILL BE MOVED TO SERVER
 
-                        // Update the video in the database
-                        const updateTx = db.transaction('videos', 'readwrite');
-                        const updateStore = updateTx.objectStore('videos');
-                        await updateStore.put(video);
-                        await updateTx.complete;
-                        firstTimeToUpdateViews.current = false;
-                    }
                 } else {
                     console.log('No video found or video has no URL');
                 }
@@ -64,28 +49,12 @@ function PlayVideo() {
 
         async function fetchUploadedUserData(username) {
             try {
-                const db = await openDB('MeaTubeDB');
-                if (!db.objectStoreNames.contains('users')) {
-                    throw new Error("Object store 'users' does not exist.");
-                }
-                const transaction = db.transaction(["users"], "readonly");
-                const objectStore = transaction.objectStore("users");
-                const channelData = await objectStore.get(username);
-                if (channelData && Number.isInteger(channelData.subscribers)) {
+
+                const channelData = await ServerAPI.getUserByUsername(username);
                     setSubscriberCount(channelData.subscribers);
-                } else {
-                    console.log('No subscriber count found for the channel');
-                }
-                if (channelData && channelData.displayName) {
                     setDisplayName(channelData.displayName);
-                } else {
-                    console.log('No display name found for the channel');
-                }
-                if (channelData && channelData.image) {
                     setUserImage(channelData.image);
-                } else {
-                    console.log('No image found for the channel');
-                }
+
             } catch (error) {
                 console.error('Failed to fetch subscriber count:', error);
                 setSubscriberCount('Failed to load data');
@@ -94,29 +63,18 @@ function PlayVideo() {
 
         async function fetchLogedInUserData() {
             try {
-                if (!(loggedInUser == 'null')) {
-                    const db = await openDB('MeaTubeDB');
-                    if (!db.objectStoreNames.contains('users')) {
-                        throw new Error("Object store 'users' does not exist.");
-                    }
-                    const transaction = db.transaction(["users"], "readonly");
-                    const objectStore = transaction.objectStore("users");
-                    const logedinUserdata = await objectStore.get(loggedInUser);
-                    if (firstTimeToUpdateUserInteraction.current) {
-                        // Check if the user like or dislike the video and set the state variable only once
-                        if (logedinUserdata.likedVideos.includes(Number(videoId))) {
-                            setUserInteraction(LIKE);
-                        } else if (logedinUserdata.dislikedVideos.includes(Number(videoId))) {
-                            setUserInteraction(DISLIKE);
-                        } else {
-                            setUserInteraction(NONE);
-                        }
-                        if (logedinUserdata && logedinUserdata.image) {
-                            setlogedinUserImage(logedinUserdata.image);
-                        }
-                        // setting the first load to false that insures that the views and likes will be updated only once
-                        firstTimeToUpdateUserInteraction.current = false;
-                        setUpdatingInteraction(false);
+                if (loggedInUser && loggedInUser !== 'null') {
+
+                    const logedinUserdata = ServerAPI.getUserByUsername(JSON.parse(localStorage.getItem('loggedInUserDetails')).username);
+                    
+                    setlogedinUserImage(logedinUserdata.image);
+                    // Check if the user like or dislike the video and set the state variable only once
+                    if (video.userLiked) {
+                        setUserInteraction(LIKE);
+                    } else if (video.userDisliked) {
+                        setUserInteraction(DISLIKE);
+                    } else {
+                        setUserInteraction(NONE);
                     }
                 }
             } catch (e) {
@@ -126,14 +84,14 @@ function PlayVideo() {
 
         async function fetchData() {
             await fetchVideo();
-            if (video && video.username) {
-                await fetchUploadedUserData(video.username);
+            if (videoDetails && videoDetails.username) {
+                await fetchUploadedUserData(videoDetails.username);
                 await fetchLogedInUserData();
             }
         }
 
         fetchData();
-    }, [video, videoId]);
+    }, [videoId, loggedInUser]);
 
     const handleLike = async () => {
         if (!loggedInUser || loggedInUser === 'null') {
@@ -141,67 +99,51 @@ function PlayVideo() {
             return;
         }
 
-        // Prevent rapid successive updates
-        if (updatingInteraction) return;
-        setUpdatingInteraction(true);
 
         try {
             if (userInteraction !== LIKE) {
-                setUserInteraction(LIKE);
                 if (userInteraction === DISLIKE) {
                     // If the user has disliked the video, clicking like will remove the dislike
-                    await updateVideoDislikes(Number(videoId), false); // false to decrease dislike
-                    await updateUserInteraction(Number(videoId), NONE);
+                    await updateVideoDislikes(videoId, false); // false to decrease dislike
+                    setUserInteraction(NONE);
                 }
                 // Update the video likes on the database
-                await updateVideoLikes(Number(videoId), true); // true for like
-                await updateUserInteraction(Number(videoId), LIKE);
+                await updateVideoLikes(videoId, true); // true for like
+                setUserInteraction(LIKE);
             } else {
-                setUserInteraction(NONE);
                 // If already liked, clicking again will remove the like
                 // Update the video likes on the database
-                await updateVideoLikes(Number(videoId), false); // false to decrease like
-                await updateUserInteraction(Number(videoId), NONE);
+                await updateVideoLikes(videoId, false); // false to decrease like
+                setUserInteraction(NONE);
             }
         } catch (error) {
             console.error('Failed to like video:', error);
-        } finally {
-            setUpdatingInteraction(false);
         }
     };
 
     const handleDislike = async () => {
-        if (loggedInUser === 'null') {
+        if (loggedInUser === 'null' || !loggedInUser) {
             alert('Please log in to dislike videos.');
             return;
         }
-        // Prevent rapid successive updates
-        if (updatingInteraction) return;
-        setUpdatingInteraction(true);
 
         try {
             if (userInteraction !== DISLIKE) {
-                setUserInteraction(DISLIKE);
                 if (userInteraction === LIKE) {
                     // If the user has liked the video, clicking dislike will remove the like
-                    await updateVideoLikes(Number(videoId), false); // false to decrease like
-                    await updateUserInteraction(Number(videoId), NONE);
+                    await updateVideoLikes(videoId, false); // false to decrease like
+                    setUserInteraction(NONE);
                 }
-
+                
                 // update the video dislikes on the database
-                await updateVideoDislikes(Number(videoId), true); // true for dislike
-                await updateUserInteraction(Number(videoId), DISLIKE);
+                await updateVideoDislikes(videoId, true); // true for dislike
+                setUserInteraction(DISLIKE);
             } else {
-                setUserInteraction(NONE);
                 // If already disliked, clicking again will remove the dislike
-
-                await updateVideoDislikes(Number(videoId), false); // false to decrease dislike
-                await updateUserInteraction(Number(videoId), NONE);
-            }
+                await updateVideoDislikes(videoId, false); // false to decrease dislike
+                setUserInteraction(NONE);            }
         } catch (error) {
             console.error('Failed to dislike video:', error);
-        } finally {
-            setUpdatingInteraction(false);
         }
     };
 
@@ -217,67 +159,37 @@ function PlayVideo() {
 
     // Increment or decrement the number of likes based on isLike. ture ++, flase --
     const updateVideoLikes = async (videoId, isLike) => {
-        const db = await openDB('MeaTubeDB');
-        const tx = db.transaction('videos', 'readwrite');
-        const store = tx.objectStore('videos');
-        const video = await store.get(Number(videoId));
-        if (video) {
-            isLike ? video.likes++ : video.likes--;
-            await store.put(video); // Update the video record in the database.
-
+        try {
+            await ServerAPI.addLike(videoId);
+            video.likes++;
+            video.userLiked = true;
+        } catch (error) {
+            if (error.message.contains('delete')) {
+                video.likes--;
+                video.userLiked = false;
+            }
         }
-        await tx.done; // Close the transaction.
     };
 
     const updateVideoDislikes = async (videoId, isDislike) => {
-        const db = await openDB('MeaTubeDB');
-        const tx = db.transaction('videos', 'readwrite');
-        const store = tx.objectStore('videos');
-        const video = await store.get(Number(videoId));
-        if (video) {
-            isDislike ? video.dislikes++ : video.dislikes--; // Increment or decrement dislikes based on isDislike.
-            await store.put(video);
-        }
-        await tx.done;
-    };
-
-    async function updateUserInteraction(videoId, interaction) {
         try {
-            const db = await openDB('MeaTubeDB'); // Corrected database name
-            // Ensure the 'users' object store exists before proceeding.
-            if (!db.objectStoreNames.contains('users')) {
-                console.error("Object store 'users' does not exist.");
-                return; // Exit the function if the object store doesn't exist.
-            }
-            const tx = db.transaction(["users"], "readwrite");
-            const store = tx.objectStore('users');
-            const user = await store.get(loggedInUser);
-            if (user) {
-                switch (interaction) {
-                    case 1: // Like
-                        user.likedVideos = [...new Set([...(user.likedVideos || []), Number(videoId)])];
-                        break;
-                    case 2: // Dislike
-                        user.dislikedVideos = [...new Set([...(user.dislikedVideos || []), Number(videoId)])];
-                        break;
-                    default: // Remove interaction
-                        user.likedVideos = (user.likedVideos || []).filter(id => id !== Number(videoId));
-                        user.dislikedVideos = (user.dislikedVideos || []).filter(id => id !== Number(videoId));
-                }
-                await store.put(user);
-            }
-            await tx.done;
+            await ServerAPI.addDisLike(videoId);
+            video.dislikes++;
+            video.userDisliked = true;
         } catch (error) {
-            console.error('Failed to update user interaction:', error);
+            if (error.message.contains('delete')) {
+                video.dislikes--;
+                video.userDisliked = false;
+            }
         }
-    }
+    };
 
     function hendleSubscribe() {
         alert('didnt implement yet!');
     }
 
     const handleCommentChange = (event) => {
-        setComment(event.target.value);
+        setNewComment(event.target.value);
     };
 
     async function handleNewComment(commentText) {
@@ -293,22 +205,13 @@ function PlayVideo() {
         }
 
         try {
-            const db = await openDB('MeaTubeDB');
-            if (!db.objectStoreNames.contains('videos')) {
-                console.error("Object store 'videos' does not exist.");
-                return;
-            }
-            const tx = db.transaction('videos', 'readwrite');
-            const store = tx.objectStore('videos');
-            const allVideos = await store.getAll();
-            const video = allVideos.find(v => v.id === Number(videoId));
             if (!video) {
                 console.error('Video not found.');
                 return;
             }
             // Create the comment object
             const comment = {
-                id: video.commentsLink ? video.commentsLink.length : 0,
+                videoId: videoId,
                 commentText,
                 userName: loggedInUser,
                 displayName: displayName,
@@ -317,18 +220,17 @@ function PlayVideo() {
                 likesNum: 0,
                 dislikesNum: 0
             };
-            video.comments++;
+            ServerAPI.addComment(videoId, comment);
+
             // Add the comment to the video's comments list
-            if (!video.commentsLink) {
-                video.commentsLink = [comment];
+            if (!video.comments) {
+                video.comments = [comment];
             } else {
-                video.commentsLink = [comment, ...video.commentsLink];
+                video.comments = [comment, ...video.comments];
             }
             // Update the state to reflect the new comment
-            setComment('');
+            setNewComment('');
             // Update the video in the database
-            await store.put(video);
-            await tx.done;
             console.log('Comment added successfully');
             // should do!!!!!!, update the UI or state to reflect the new comment
         } catch (error) {
@@ -380,13 +282,13 @@ function PlayVideo() {
                     <div className='vid-description'>
                         <p>{video.description}</p>
                         <hr />
-                        <h4>{video.comments} Comments</h4>
+                        <h4>{video.comments.length} Comments</h4>
                     </div>
                     <div className='add-comment-container'>
                         <img className="img" src={logedinUserImage} alt='commenter' />
                         <div>
-                            <input type="text" placeholder="Add a comment..." className="add-comment-input" value={comment} onChange={handleCommentChange} />
-                            <button className="add-comment-button" onClick={() => handleNewComment(comment)}>Comment</button>
+                            <input type="text" placeholder="Add a comment..." className="add-comment-input" value={newComment} onChange={handleCommentChange} />
+                            <button className="add-comment-button" onClick={() => handleNewComment(newComment)}>Comment</button>
                         </div>
                     </div>
                     <div className='comment-container'>
