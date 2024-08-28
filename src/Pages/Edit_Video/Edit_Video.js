@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
-import { openDB } from 'idb';
+import ServerAPI from '../../ServerAPI';
 import './Edit_Video.css';
-import { getVideos } from '../../Components/Feed/Feed';
+import { jwtDecode } from 'jwt-decode';
 
 function EditMovie() {
   const { id } = useParams();
@@ -13,31 +13,46 @@ function EditMovie() {
   const [category, setCategory] = useState('');
   const [videoFile, setVideoFile] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
+  const [ channel, setchannel] = useState('');
+  const [username, setUsername] = useState('');
 
   const formRef = useRef();
 
   useEffect(() => {
     const fetchVideoData = async () => {
+      try {
+        
+        // Get the username from the token
+        const token = localStorage.getItem('loggedInUserToken');
+        if (!token) {
+          throw new Error('No token found');
+        }
+    
+        const decodedToken = jwtDecode(token);
+        const username = decodedToken.username;
+        setUsername(username);
+        setchannel(decodedToken.channel);
+    
+        // Check if the user is authorized to edit the video
+        if (videoData && videoData.username !== username) {
+          alert('You are not authorized to edit this video!');
+          navigate('/');
+        }
 
-      const allVideos = await getVideos();
-      const video = allVideos.find(v => v.id === Number(id));
-      // Check if the user is authorized to edit the video
-      if (video && video.username !== localStorage.getItem('loggedInUser')) {
-        alert('You are not authorized to edit this video!');
+        // Set the fields from the video data
+        const videoData = await ServerAPI.getVideoById(id);
+        setTitle(videoData.title);
+        setDescription(videoData.description);
+        setCategory(videoData.category);
+        setVideoFile(videoData.videoFile);
+        setPreviewImage(videoData.previewImage);
+
+
+      } catch (error) {
+        console.error('Error fetching video data or decoding token:', error);
+        alert('Failed to fetch video data or unauthorized access.');
         navigate('/');
       }
-
-      if (video) {
-        setTitle(video.title);
-        setDescription(video.description);
-        setCategory(video.category);
-        setVideoFile(video.videoFile);
-        setPreviewImage(video.previewImage);
-      } else {
-        alert('Video not found!');
-        navigate('/');
-      }
-
     };
     fetchVideoData();
   }, [id, navigate]);
@@ -76,28 +91,17 @@ function EditMovie() {
       return;
     }
     try {
-      const db = await openDB('MeaTubeDB');
-      const tx = db.transaction('videos', 'readwrite');
-      const store = tx.objectStore('videos');
-      // Retrieve the existing video data
-      const existingVideoData = await store.get(Number(id));
-      if (!existingVideoData) {
-        alert('Video not found.');
-        return;
-      }
-      // Update the fields in the existing video data
       const updatedVideoData = {
-        ...existingVideoData,
         title,
         description,
-        category,
         videoFile,
         previewImage,
-        // Keep other data unchanged
+        channel,
+        category,
+        username,
       };
-      // Put the updated object back into the database
-      await store.put(updatedVideoData);
-      await tx.complete;
+
+      ServerAPI.updateVideo(id, updatedVideoData);
       alert('Video updated successfully!');
       navigate('/watch/' + id, { replace: true });
     } catch (error) {
@@ -107,21 +111,13 @@ function EditMovie() {
 
   const handleDelete = async () => {
     try {
-      await deleteVideo(id); 
+      ServerAPI.deleteVideoById(id);
       alert('Video deleted successfully!');
-      navigate('/'); 
+      navigate('/');
     } catch (error) {
       console.error('Could not delete the video:', error);
     }
   };
-
-  async function deleteVideo(id) {
-    const db = await openDB('MeaTubeDB');
-    const tx = db.transaction('videos', 'readwrite');
-    const store = tx.objectStore('videos');
-    await store.delete(Number(id));
-    await tx.complete;
-  }
 
   return (
     <div className={`min-h-screen flex items-center justify-center bg-zinc-100 dark:bg-zinc-900 `}>

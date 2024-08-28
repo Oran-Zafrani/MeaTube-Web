@@ -5,7 +5,7 @@ axios.defaults.baseURL = 'http://localhost:8080'; // Include the protocol (http:
 
 // the ServerAPI class is a wrapper around the axios library that makes it easier to fetch data from the server
 class ServerAPI {
-  
+
   static async login(username, password) {
     try {
       const response = await axios.post('/api/login', {
@@ -44,10 +44,10 @@ class ServerAPI {
   static async createUser(userData) {
     try {
       const response = await axios.post('/api/users', userData);
-      return response.data; 
+      return response.data;
     } catch (error) {
       console.error('Error creating user:', error);
-      throw error; 
+      throw error;
     }
   }
 
@@ -67,7 +67,7 @@ class ServerAPI {
       throw error;
     }
   }
-  
+
   static async deleteUser(username, token) {
     try {
       const response = await axios.delete(`/api/users/${username}`, {
@@ -132,7 +132,12 @@ class ServerAPI {
 
   static async deleteVideoById(id) {
     try {
-      const response = await axios.delete(`/api/videos/${id}`);
+      const token = localStorage.getItem('loggedInUserToken');
+      const response = await axios.delete(`/api/videos/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       return response.data;
     } catch (error) {
       console.error('Error deleting video by ID:', error);
@@ -142,7 +147,12 @@ class ServerAPI {
 
   static async updateVideo(id, videoData) {
     try {
-      const response = await axios.put(`/api/videos/${id}`, videoData);
+      const token = localStorage.getItem('loggedInUserToken');
+      const response = await axios.put(`/api/videos/${id}`, videoData, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       return response.data;
     } catch (error) {
       console.error('Error updating video:', error);
@@ -242,7 +252,12 @@ class ServerAPI {
 
   static async updateComment(id, commentData) {
     try {
-      const response = await axios.put(`/api/comments/${id}`, commentData);
+      const token = localStorage.getItem('loggedInUserToken');
+      const response = await axios.put(`/api/comments/${id}`, commentData, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       return response.data;
     } catch (error) {
       console.error('Error updating comment:', error);

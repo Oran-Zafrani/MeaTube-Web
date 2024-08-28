@@ -1,88 +1,76 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { formatViews, parseUploadTime } from '../Feed/VideoCard';
-import { openDB } from 'idb';
+import ServerAPI from '../../ServerAPI';
+import { jwtDecode } from 'jwt-decode';
 
-
-export const CommentCard = ({ comment, index, loggedInUser, videoId }) => {
+export const CommentCard = ({ comment, index }) => {
     const [isEditMode, setIsEditMode] = useState(false);
     const [editedCommentText, setEditedCommentText] = useState(comment.commentText);
+    const [tokenUserName, setTokenUserName] = useState('');
+
+    // Get the username from the token for validation that the user can edit or delete the comment
+    useEffect(() => {
+        try {
+            const token = localStorage.getItem('loggedInUserToken');
+            if (token) {
+                const decodedToken = jwtDecode(token);
+                setTokenUserName(decodedToken.username);
+            }
+        } catch (error) {
+            setTokenUserName('');
+            console.error('Error fetching user data:', error);
+        }
+    }, []);
 
     const handleEditComment = () => {
         setIsEditMode(!isEditMode);
     };
 
-    const handleSaveEditedComment = async () => { 
-        const db = await openDB('MeaTubeDB');
-        if (!db.objectStoreNames.contains('videos')) {
-            console.error("Object store 'videos' does not exist in commentcaed handle Delete.");
-            return;
+    const handleSaveEditedComment = async () => {
+        try {
+            const response = await ServerAPI.updateComment(comment.id, { commentText: editedCommentText });
+            console.log('Comment edited and saved successfully.');
+            setIsEditMode(false);
+        } catch (error) {
+            console.error('Error editing comment:', error);
+            const errorMessage = error.response?.data?.message || 'Failed to edit comment.';
+            alert(errorMessage);
         }
-        const tx = db.transaction('videos', 'readwrite');
-        const store = tx.objectStore('videos');
-        const allVideos = await store.getAll();
-        const video = allVideos.find(v => v.id === Number(videoId));
-        if (!video) {
-            console.error('Video not found.');
-            return;
-        }
-        video.commentsLink = video.commentsLink.map(c => {
-            if (c.id === comment.id) {
-                c.commentText = editedCommentText;
-            }
-            return c;
-        }
-        );
-        await store.put(video);
-        await tx.done;
-        console.log('Comment edited and saved successfully.');
-        setIsEditMode(false);
     };
 
     const handleLike = async () => {
-        alert('like botton is not implemented yet');
+        alert('Like button is not implemented yet');
     };
 
     const handleDislike = async () => {
-        alert('dislike botton is not implemented yet');
+        alert('Dislike button is not implemented yet');
     };
 
-
-
     const handleDeleteComment = async () => {
-        const db = await openDB('MeaTubeDB');
-        if (!db.objectStoreNames.contains('videos')) {
-            console.error("Object store 'videos' does not exist in commentcaed handle Delete.");
-            return;
+        try {
+            await ServerAPI.deleteComment(comment.id);
+            console.log('Comment deleted successfully.');
+        } catch (error) {
+            console.error('Error deleting comment:', error);
+            const errorMessage = error.response?.data?.message || 'Failed to delete comment.';
+            alert(errorMessage);
         }
-        const tx = db.transaction('videos', 'readwrite');
-        const store = tx.objectStore('videos');
-        const allVideos = await store.getAll();
-        const video = allVideos.find(v => v.id === Number(videoId));
-        if (!video) {
-            console.error('Video not found.');
-            return;
-        }
-        video.comments--;
-        console.log('Comment:', comment);
-        video.commentsLink = video.commentsLink.filter(c => c.id !== comment.id);
-        console.log('Video:', video);
-        await store.put(video);
-        await tx.done;
-        console.log('Comment deleted successfully.'); 
     };
 
     return (
         <div className='comment' key={index}>
             <img src={comment.userImage} alt='commenter' className="commenter-image" />
-            <div >
-                <h3>{comment.displayName} <span>{parseUploadTime(comment.timestamp)}</span></h3>
-                { isEditMode ? (
-                    <>
+            <div>
+                <h3>{comment.DisplayName} <span>{parseUploadTime(comment.timestamp)}</span></h3>
+                {isEditMode ? (
                     <div className='add-comment-container'>
-                        <input value={editedCommentText} onChange={(e) => setEditedCommentText(e.target.value)} className="add-comment-input"/>
+                        <input
+                            value={editedCommentText}
+                            onChange={(e) => setEditedCommentText(e.target.value)}
+                            className="add-comment-input"
+                        />
                         <button className="add-comment-button" onClick={handleSaveEditedComment}>Done</button>
-                        </div>
-                    </>
+                    </div>
                 ) : (
                     <p>{comment.commentText}</p>
                 )}
@@ -91,7 +79,7 @@ export const CommentCard = ({ comment, index, loggedInUser, videoId }) => {
                     <span>{formatViews(comment.likesNum)}</span>
                     <i className="bi bi-hand-thumbs-down-fill" onClick={handleDislike}></i>
                     <span>{formatViews(comment.dislikesNum)}</span>
-                    {loggedInUser === comment.userName && (
+                    {tokenUserName === comment.userName && (
                         <>
                             <i className="bi bi-pencil-square" onClick={handleEditComment} style={{ cursor: 'pointer' }}></i>
                             <i className="bi bi-trash" onClick={handleDeleteComment} style={{ cursor: 'pointer' }}></i>
