@@ -1,70 +1,66 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# MeaTube Client Web Project
 
-## Available Scripts
+This README explains how to set up and run the MeaTube client web project.
 
-In the project directory, you can run:
+## Prerequisites
 
-### `npm start`
+- Git
+- Node.js (v14.0.0 or later)
+- npm (v6.0.0 or later)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Setup
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+1. Clone the repository:
+   ```
+   git clone https://github.com/Oran-Zafrani/FooTube-Web.git
+   cd FooTube-Web
+   ```
 
-### `npm test`
+2. Install dependencies:
+   - npm node modules
+   ```
+   npm install
+   ```
+   - bootstrap icons
+   ```
+   npm install bootstrap-icons
+   ```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Running the Project
 
-### `npm run build`
+Start the React development server:
+```
+npm start
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+This will run the app in development mode. Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Work Process
+1. Planning: We started by planning the project, defining requirements, and creating a basic interface design.
+2. Task Management - We used Jira to manage tasks and track progress:
+  - Tasks were divided into sprints.
+  - Jira boards were utilized to visualize the workflow and status of each task.
+  - This ensured transparency and effective collaboration.
+3. Project Setup: We created the project using Create React App and added the necessary dependencies.
+4. Development:
+  - Created basic components.
+  - Added state management using React Hooks.
+  - Integrated Bootstrap Icons to enhance the interface.
+  - Maintained data representation consistency between android and web, for making the following work on server much fluent.
+  - Added mock data to simulate representation on the website and android.
+5. Data Storage:
+  - Initially used local storage.
+  - Faced limitations due to its 5 MB capacity.
+  - Refactored the code to use IndexedDB for more robust and scalable data storage.
+6. Testing: We performed manual tests to ensure functionality.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Troubleshooting
 
-### `npm run eject`
+If you encounter issues:
+1. Ensure all prerequisites are installed and up-to-date
+2. Try deleting `node_modules` and `package-lock.json`, then run `npm install` again
+3. Clear your browser cache and restart the development server
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+For more information, refer to the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
