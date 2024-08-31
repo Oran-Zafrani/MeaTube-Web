@@ -6,7 +6,7 @@ import { formatViews } from '../Feed/VideoCard';
 export const RecommendedVideoCard = ({RecommendedVideo}) => {
 
     return (
-        <Link to={`/watch/${RecommendedVideo.id}`} className='side-video-list' onClick={()=> window.scrollTo(0,0)}>
+        <Link to={`/watch/${RecommendedVideo._id}`} className='side-video-list' onClick={()=> window.scrollTo(0,0)}>
             <img src={RecommendedVideo.previewImage} alt='' />
             <div className='vid-info'>
                 <h3>{RecommendedVideo.title}</h3>

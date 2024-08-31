@@ -26,7 +26,7 @@ const VideoCard = ({ vidCard }) => {
 
   return (
     <div className='card'>
-      <Link to={`watch/${video.id}`} onClick={() => window.scrollTo(0, 0)}>
+      <Link to={`watch/${video._id}`} onClick={() => window.scrollTo(0, 0)}>
         <img src={video.previewImage} alt='' />
         <h2>{video.title}</h2>
       </Link>

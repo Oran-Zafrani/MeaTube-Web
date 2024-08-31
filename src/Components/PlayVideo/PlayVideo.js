@@ -13,7 +13,7 @@ function PlayVideo() {
     const [subscriberCount, setSubscriberCount] = useState('Loading...');
     const [uploadedUserImage, setUserImage] = useState(defaultImage);
     const [userInteraction, setUserInteraction] = useState(0);
-    var loggedInUser = localStorage.getItem('loggedInUser');
+    const [loggedInUserJson, setLoggedInUserJson] = useState(null);
     const navigate = useNavigate();
 
     // Define constants for user interactions
@@ -63,21 +63,26 @@ function PlayVideo() {
 
         async function fetchLogedInUserData() {
             try {
-                if (loggedInUser && loggedInUser !== 'null') {
+                const userJson = JSON.parse(localStorage.getItem('loggedInUserDetails'));
+                setLoggedInUserJson(userJson);
+                if (userJson && userJson !== 'null') {
 
-                    const logedinUserdata = ServerAPI.getUserByUsername(JSON.parse(localStorage.getItem('loggedInUserDetails')).username);
+                    const logedinUserdata = await ServerAPI.getUserByUsername(userJson.username);
                     
                     setlogedinUserImage(logedinUserdata.image);
                     // Check if the user like or dislike the video and set the state variable only once
-                    if (video.userLiked) {
+                    if (videoDetails?.userLiked) {
                         setUserInteraction(LIKE);
-                    } else if (video.userDisliked) {
+                    } else if (videoDetails?.userDisliked) {
                         setUserInteraction(DISLIKE);
                     } else {
                         setUserInteraction(NONE);
                     }
                 }
             } catch (e) {
+                setLoggedInUserJson(null);
+                setlogedinUserImage(defaultImage);
+
                 console.error('Failed to fetch logged in user data:', e);
             }
         }
@@ -91,10 +96,10 @@ function PlayVideo() {
         }
 
         fetchData();
-    }, [videoId, loggedInUser]);
+    }, [videoId, localStorage.getItem('loggedInUserDetails')]);
 
     const handleLike = async () => {
-        if (!loggedInUser || loggedInUser === 'null') {
+        if (!loggedInUserJson || loggedInUserJson === 'null') {
             alert('Please log in to like videos.');
             return;
         }
@@ -122,7 +127,7 @@ function PlayVideo() {
     };
 
     const handleDislike = async () => {
-        if (loggedInUser === 'null' || !loggedInUser) {
+        if (loggedInUserJson === 'null' || !loggedInUserJson) {
             alert('Please log in to dislike videos.');
             return;
         }
@@ -164,7 +169,7 @@ function PlayVideo() {
             video.likes++;
             video.userLiked = true;
         } catch (error) {
-            if (error.message.contains('delete')) {
+            if (error.response.data.message.includes('Delete')) {
                 video.likes--;
                 video.userLiked = false;
             }
@@ -177,7 +182,7 @@ function PlayVideo() {
             video.dislikes++;
             video.userDisliked = true;
         } catch (error) {
-            if (error.message.contains('delete')) {
+            if (error.response.data.message.includes('Delete')) {
                 video.dislikes--;
                 video.userDisliked = false;
             }
@@ -194,7 +199,7 @@ function PlayVideo() {
 
     async function handleNewComment(commentText) {
         // Check if the user is logged in
-        if (!loggedInUser || loggedInUser === 'null') {
+        if (!loggedInUserJson || loggedInUserJson === 'null') {
             alert('Please log in to post comments.');
             return;
         }
@@ -213,14 +218,14 @@ function PlayVideo() {
             const comment = {
                 videoId: videoId,
                 commentText,
-                userName: loggedInUser,
-                displayName: displayName,
+                userName: loggedInUserJson.username,
+                displayName: loggedInUserJson.displayName,
                 userImage: logedinUserImage,
                 timestamp: new Date().toISOString(),
                 likesNum: 0,
                 dislikesNum: 0
             };
-            ServerAPI.addComment(videoId, comment);
+            await ServerAPI.addComment(videoId, comment);
 
             // Add the comment to the video's comments list
             if (!video.comments) {
@@ -228,6 +233,7 @@ function PlayVideo() {
             } else {
                 video.comments = [comment, ...video.comments];
             }
+            setComments(video.comments);
             // Update the state to reflect the new comment
             setNewComment('');
             // Update the video in the database
@@ -240,7 +246,7 @@ function PlayVideo() {
 
     // Render the edit button if the logged-in user is the video uploader
     const renderEditButton = () => {
-        if (video && video.username === loggedInUser) {
+        if (video && video.username === loggedInUserJson?.username) {
             return (
                 <Link to={`edit`} className='video-action-button' onClick={() => window.scrollTo(0, 0)}>
                     <i className="bi bi-pencil-square"></i>
@@ -285,7 +291,7 @@ function PlayVideo() {
                         <h4>{video.comments.length} Comments</h4>
                     </div>
                     <div className='add-comment-container'>
-                        <img className="img" src={logedinUserImage} alt='commenter' />
+                        <img src={logedinUserImage} alt='commenter' />
                         <div>
                             <input type="text" placeholder="Add a comment..." className="add-comment-input" value={newComment} onChange={handleCommentChange} />
                             <button className="add-comment-button" onClick={() => handleNewComment(newComment)}>Comment</button>
@@ -294,7 +300,7 @@ function PlayVideo() {
                     <div className='comment-container'>
                         {
                             comments.map((comment, index) => (
-                                <CommentCard index={index} comment={comment} loggedInUser={loggedInUser} videoId={videoId}/>
+                                <CommentCard index={index} comment={comment}/>
                             ))
                         }
                     </div>

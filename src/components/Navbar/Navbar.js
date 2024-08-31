@@ -7,13 +7,14 @@ import ServerAPI from '../../ServerAPI';
 import Darkmode from './Darkmode';
 import { jwtDecode } from 'jwt-decode';
 
-const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedInUser }) => {
+const Navbar = ({ setSidebar, setIsChecked, setSearch }) => {
     const navigate = useNavigate();
     const [profilePic, setProfilePic] = useState(defaultProfilePic); // State to manage profile picture
     const [searchString, setSearchString] = useState('');
     const [displayName, setDisplayName] = useState('');
     const buttonRef = useRef(null);
-    const token = loggedInUser;
+    const [loggedInUser, setLoggedInUser] = useState(null);
+
     let username;
 
     useEffect(() => {
@@ -32,6 +33,7 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
         const fetchUserData = async () => {
             try {
                 const decodedToken = jwtDecode(localStorage.getItem('loggedInUserToken'));
+                setLoggedInUser(localStorage.getItem('loggedInUserToken'));
                 username = decodedToken.username;
                 const channelData = await ServerAPI.getUserByUsername(username);
                 if (channelData && channelData.image) {
@@ -42,14 +44,12 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
                     setProfilePic(defaultProfilePic);
                 }
             } catch (error) {
-                setLoggedInUser(null);
-                setProfilePic(defaultProfilePic);
-                setDisplayName(null);
+                cleanUserData();
             }
         };
 
         fetchUserData();
-    }, [loggedInUser, localStorage.getItem('loggedInUserToken')]);
+    }, [localStorage.getItem('loggedInUserToken')]);
 
     const checkLoggedIUser = () => {
         try {
@@ -57,11 +57,11 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
         if (loggedInUser === null || loggedInUser === 'null') {
             navigate('/Login');
         } else {
-            const decodedToken = jwtDecode(token);
+            const decodedToken = jwtDecode(localStorage.getItem('loggedInUserToken'));
             username = decodedToken.username;
             navigate(`/Edit_User/${username}`);
         }} catch (error) {
-            localStorage.setItem('loggedInUserToken', 'null');
+            cleanUserData();
             navigate('/Login');
         }
     };
@@ -69,9 +69,7 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
     // Function to handle logout (assuming you have one)
     const handleLogout = () => {
         // Perform logout operations...
-        setLoggedInUser(null); // Reset the logged in user
-        localStorage.setItem('loggedInUserToken', 'null'); // Reset the logged in user
-        setProfilePic(defaultProfilePic); // Reset profile picture to default on logout
+        cleanUserData();
         navigate('/'); // Redirect to the home page after logout
     };
 
@@ -84,6 +82,14 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
     const handleInputChange = (e) => {
         setSearchString(e.target.value); // Update the input value as the user types
     };
+
+    function cleanUserData() {
+        localStorage.setItem('loggedInUserToken', 'null');
+        localStorage.setItem('loggedInUserDetails', 'null');
+        setLoggedInUser(null);
+        setProfilePic(defaultProfilePic);
+        setDisplayName(null);
+    }
 
     return (
         <div>
