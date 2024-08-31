@@ -6,10 +6,27 @@
     margin-top: 15px;
 }
 
-.card img {
+.card {
+    position: relative;
+    width: 100%; /* Ensure the card takes full width of its container */
+    
+}
+.img-container {
+    position: relative;
     width: 100%;
-    height: 56.25%;
+    aspect-ratio: 16 / 9;
     border-radius: 5px;
+    overflow: hidden;
+    background-color: black;
+}
+
+.img-container img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 .card h2 {

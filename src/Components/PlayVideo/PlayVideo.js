@@ -260,8 +260,11 @@ function PlayVideo() {
 
     return (
         <div className='play-video'>
-            {videoSrc && <video src={videoSrc} controls autoPlay muted></video>}
-            {!videoSrc && <p>Loading video...</p>}
+            
+            <div className='video-container'>
+                {videoSrc && <video src={videoSrc} controls autoPlay muted></video>}
+                {!videoSrc && <p>Loading video...</p>}
+            </div>
 
             {video ? (
                 <>
@@ -298,7 +301,7 @@ function PlayVideo() {
                         </div>
                     </div>
 
-u                    <CommentSection Icomments={comments} />
+                    <CommentSection Icomments={comments} />
                 </>
             ) : (
                 <p>Video information is loading...</p>
