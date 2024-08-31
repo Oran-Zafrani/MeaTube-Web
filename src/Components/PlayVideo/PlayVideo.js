@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import './PlayVideo.css';
 import { formatViews, parseUploadTime } from '../../Components/Feed/VideoCard';
 import defaultImage from '../../assets/images/guest_image.png';
-import { CommentCard } from './CommentCard';
+import  CommentSection  from './CommentSection';
 import ServerAPI from '../../ServerAPI';
 
 function PlayVideo() {
@@ -297,14 +297,8 @@ function PlayVideo() {
                             <button className="add-comment-button" onClick={() => handleNewComment(newComment)}>Comment</button>
                         </div>
                     </div>
-                    <div className='comment-container'>
-                        {
-                            comments.map((comment, index) => (
-                                <CommentCard index={index} comment={comment}/>
-                            ))
-                        }
-                    </div>
 
+u                    <CommentSection Icomments={comments} />
                 </>
             ) : (
                 <p>Video information is loading...</p>
