@@ -21,7 +21,18 @@ function EditMovie() {
   useEffect(() => {
     const fetchVideoData = async () => {
       try {
-        
+      
+        // Set the fields from the video data
+        const videoData = await ServerAPI.getVideoById(id);
+        Promise.all([videoData]).then((values) => {
+          setTitle(values[0].title);
+          setDescription(values[0].description);
+          setCategory(values[0].category);
+          setVideoFile(values[0].videoFile);
+          setPreviewImage(values[0].previewImage);
+        });
+
+
         // Get the username from the token
         const token = localStorage.getItem('loggedInUserToken');
         if (!token) {
@@ -31,7 +42,7 @@ function EditMovie() {
         const decodedToken = jwtDecode(token);
         const username = decodedToken.username;
         setUsername(username);
-        setchannel(decodedToken.channel);
+        setchannel(decodedToken.displayName);
     
         // Check if the user is authorized to edit the video
         if (videoData && videoData.username !== username) {
@@ -39,13 +50,7 @@ function EditMovie() {
           navigate('/');
         }
 
-        // Set the fields from the video data
-        const videoData = await ServerAPI.getVideoById(id);
-        setTitle(videoData.title);
-        setDescription(videoData.description);
-        setCategory(videoData.category);
-        setVideoFile(videoData.videoFile);
-        setPreviewImage(videoData.previewImage);
+
 
 
       } catch (error) {
