@@ -225,13 +225,13 @@ function PlayVideo() {
                 likesNum: 0,
                 dislikesNum: 0
             };
-            await ServerAPI.addComment(videoId, comment);
+            var newComment = await ServerAPI.addComment(videoId, comment);
 
             // Add the comment to the video's comments list
             if (!video.comments) {
-                video.comments = [comment];
+                video.comments = [newComment];
             } else {
-                video.comments = [comment, ...video.comments];
+                video.comments = [newComment, ...video.comments];
             }
             setComments(video.comments);
             // Update the state to reflect the new comment
@@ -260,7 +260,7 @@ function PlayVideo() {
 
     return (
         <div className='play-video'>
-            
+
             <div className='video-container'>
                 {videoSrc && <video src={videoSrc} controls autoPlay muted></video>}
                 {!videoSrc && <p>Loading video...</p>}

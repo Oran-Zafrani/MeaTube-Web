@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { formatViews, parseUploadTime } from '../Feed/VideoCard';
 import ServerAPI from '../../ServerAPI';
-import userEvent from '@testing-library/user-event';
 
 const CommentSection = ({Icomments}) => {
     const [comments, setComments] = useState(Icomments);
