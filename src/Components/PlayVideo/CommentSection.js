@@ -85,7 +85,7 @@ const CommentCard = ({ comment, index, onDelete, editAPI }) => {
         <div className='comment' key={index}>
             <img src={comment.userImage} alt='commenter' className="commenter-image" />
             <div>
-                <h3>{comment.DisplayName} <span>{parseUploadTime(comment.timestamp)}</span></h3>
+                <h3>{comment.displayName} <span>{parseUploadTime(comment.timestamp)}</span></h3>
                 {isEditMode ? (
                     <div className='add-comment-container'>
                         <input
