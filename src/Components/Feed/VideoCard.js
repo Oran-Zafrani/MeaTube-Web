@@ -26,8 +26,10 @@ const VideoCard = ({ vidCard }) => {
 
   return (
     <div className='card'>
-      <Link to={`watch/${video.id}`} onClick={() => window.scrollTo(0, 0)}>
+      <Link to={`/watch/${video._id}`} onClick={() => window.scrollTo(0, 0)}>
+      <div className='img-container'>
         <img src={video.previewImage} alt='' />
+      </div>
         <h2>{video.title}</h2>
       </Link>
       <div style={{ display: 'flex', alignItems: 'center' }}>

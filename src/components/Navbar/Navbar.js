@@ -7,13 +7,14 @@ import ServerAPI from '../../ServerAPI';
 import Darkmode from './Darkmode';
 import { jwtDecode } from 'jwt-decode';
 
-const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedInUser }) => {
+const Navbar = ({ setSidebar, setIsChecked, setSearch }) => {
     const navigate = useNavigate();
     const [profilePic, setProfilePic] = useState(defaultProfilePic); // State to manage profile picture
     const [searchString, setSearchString] = useState('');
     const [displayName, setDisplayName] = useState('');
     const buttonRef = useRef(null);
-    const token = loggedInUser;
+    const [loggedInUser, setLoggedInUser] = useState(null);
+
     let username;
 
     useEffect(() => {
@@ -31,7 +32,8 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const decodedToken = jwtDecode(token);
+                const decodedToken = jwtDecode(localStorage.getItem('loggedInUserToken'));
+                setLoggedInUser(localStorage.getItem('loggedInUserToken'));
                 username = decodedToken.username;
                 const channelData = await ServerAPI.getUserByUsername(username);
                 if (channelData && channelData.image) {
@@ -42,30 +44,32 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
                     setProfilePic(defaultProfilePic);
                 }
             } catch (error) {
-                setProfilePic(defaultProfilePic);
+                cleanUserData();
             }
         };
 
         fetchUserData();
-    }, [loggedInUser]);
+    }, [localStorage.getItem('loggedInUserToken')]);
 
     const checkLoggedIUser = () => {
+        try {
         const loggedInUser = localStorage.getItem('loggedInUserToken');
         if (loggedInUser === null || loggedInUser === 'null') {
             navigate('/Login');
         } else {
-            const decodedToken = jwtDecode(token);
+            const decodedToken = jwtDecode(localStorage.getItem('loggedInUserToken'));
             username = decodedToken.username;
             navigate(`/Edit_User/${username}`);
+        }} catch (error) {
+            cleanUserData();
+            navigate('/Login');
         }
     };
 
     // Function to handle logout (assuming you have one)
     const handleLogout = () => {
         // Perform logout operations...
-        setLoggedInUser(null); // Reset the logged in user
-        localStorage.setItem('loggedInUserToken', 'null'); // Reset the logged in user
-        setProfilePic(defaultProfilePic); // Reset profile picture to default on logout
+        cleanUserData();
         navigate('/'); // Redirect to the home page after logout
     };
 
@@ -78,6 +82,14 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
     const handleInputChange = (e) => {
         setSearchString(e.target.value); // Update the input value as the user types
     };
+
+    function cleanUserData() {
+        localStorage.setItem('loggedInUserToken', 'null');
+        localStorage.setItem('loggedInUserDetails', 'null');
+        setLoggedInUser(null);
+        setProfilePic(defaultProfilePic);
+        setDisplayName(null);
+    }
 
     return (
         <div>
@@ -99,7 +111,7 @@ const Navbar = ({ setSidebar, setIsChecked, setSearch, loggedInUser, setLoggedIn
                     <Darkmode handleChange={() => setIsChecked(prev => prev === false ? true : false)} />
                     <i className="bi bi-upload" onClick={() => navigate('/AddMovie')} ></i>
                     <i className="bi bi-bell"></i>
-                    {loggedInUser && <Link to="/login/"><i className="bi bi-box-arrow-left" onClick={handleLogout}></i></Link>}
+                    {loggedInUser && <Link to="/"><i className="bi bi-box-arrow-left" onClick={handleLogout}></i></Link>}
                     {loggedInUser && <p className='logged-in-quote'> Hi {displayName}!</p>}
                     <img className='profile' src={profilePic} onClick={checkLoggedIUser} alt='profile-pic' />
                 </div>

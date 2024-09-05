@@ -6,7 +6,7 @@ import ServerAPI from '../../ServerAPI';
 import './Login_Screen.css';
 
 // Login component
-function Login({ setLoggedIn }) {
+function Login() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -20,8 +20,6 @@ function Login({ setLoggedIn }) {
 
     try {
       const response = await ServerAPI.login(username, password);
-      localStorage.setItem('loggedInUserToken', response.token);
-      setLoggedIn(response.token);
       alert('User logged in successfully');
       // Navigate to home page
       navigate('/');

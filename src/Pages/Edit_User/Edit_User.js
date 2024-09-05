@@ -22,6 +22,7 @@ function EditUser() {
         const user = await ServerAPI.getUserByUsername(username);
         if (user) {
           setPassword(user.password);
+          setPasswordConfirmation(user.password);
           setDisplayName(user.displayName);
           setImage(user.image);
         } else {
@@ -101,7 +102,6 @@ function EditUser() {
       await ServerAPI.updateUser(username, updatedUserData, token);
       alert('User updated successfully!');
       navigate('/');
-      navbar();
     } catch (error) {
       console.error('Could not update the user:', error);
       alert('Failed to update user, please try again.');

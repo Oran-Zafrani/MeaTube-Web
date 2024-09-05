@@ -10,23 +10,22 @@ function User_Videos() {
   const [userInfo, setUserInfo] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { channel } = useParams();
+  const { username: channel_name } = useParams();
 
   useEffect(() => {
     async function fetchUserData() {
       try {
         setLoading(true);
-        const user = await ServerAPI.getUserByChannelName(channel);
+        const user = await ServerAPI.getUserByChannelName(channel_name);
         const allVideos = await ServerAPI.getVideosByUsername(user.username);
-        const userVideos = allVideos.filter(video => video.channel === channel);
         
         setUserInfo({
           displayName: user.displayName,
           subscribers: user.subscribers,
-          videoCount: userVideos.length,
+          videoCount: allVideos.length,
           image: user.image
         });
-        setVideos(userVideos);
+        setVideos(allVideos);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -35,7 +34,7 @@ function User_Videos() {
     }
 
     fetchUserData();
-  }, [channel]);
+  }, [channel_name]);
 
   if (loading) {
     return <div>Loading...</div>;
