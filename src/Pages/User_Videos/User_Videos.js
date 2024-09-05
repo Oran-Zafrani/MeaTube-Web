@@ -10,14 +10,14 @@ function User_Videos() {
   const [userInfo, setUserInfo] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { username } = useParams();
+  const { username: channel_name } = useParams();
 
   useEffect(() => {
     async function fetchUserData() {
       try {
         setLoading(true);
-        const user = await ServerAPI.getUserByUsername(username);
-        const allVideos = await ServerAPI.getVideosByUsername(username);
+        const user = await ServerAPI.getUserByChannelName(channel_name);
+        const allVideos = await ServerAPI.getVideosByUsername(user.username);
         
         setUserInfo({
           displayName: user.displayName,
@@ -34,7 +34,7 @@ function User_Videos() {
     }
 
     fetchUserData();
-  }, [username]);
+  }, [channel_name]);
 
   if (loading) {
     return <div>Loading...</div>;

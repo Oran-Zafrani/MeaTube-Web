@@ -33,9 +33,9 @@ const VideoCard = ({ vidCard }) => {
         <h2>{video.title}</h2>
       </Link>
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        <img src={userImage} onClick={() => navigate(`/User_Videos/${video.username}`)} style={{ cursor: 'pointer' }} alt='profileforvideocardspic' className="profileforvideocardspic" />
+        <img src={userImage} onClick={() => navigate(`/User_Videos/${video.channel}`)} style={{ cursor: 'pointer' }} alt='profileforvideocardspic' className="profileforvideocardspic" />
         <div>
-          <h3 onClick={() => navigate(`/User_Videos/${video.username}`)} style={{ cursor: 'pointer' }}> {video.channel} </h3>
+          <h3 onClick={() => navigate(`/User_Videos/${video.channel}`)} style={{ cursor: 'pointer' }}> {video.channel} </h3>
           <p>{formatViews(video.views)} Views &bull; {parseUploadTime(video.uploadTime)}</p>
         </div>
       </div>
