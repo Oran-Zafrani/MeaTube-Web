@@ -12,12 +12,6 @@
     margin-bottom: 8px;
 }
 
-.side-video-list img{
-    flex-basis: 49%;
-    width: 50%;
-    border-radius: 5px;
-}
-
 .vid-info{
     flex-basis: 49%;
     padding-left: 10px;

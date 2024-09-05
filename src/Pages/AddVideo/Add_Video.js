@@ -1,7 +1,8 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { openDB } from 'idb';
+import ServerAPI from '../../ServerAPI';
+import { jwtDecode } from 'jwt-decode';
 import './Add_Video.css';
 
 function AddMovie() {
@@ -22,31 +23,32 @@ function AddMovie() {
   // Check if user is logged in
 
   useEffect(() => {
-    const user = localStorage.getItem('loggedInUser');
-    console.log('loggedInUser:', user);
-    if (check_for_first_time_logedin && user === 'null') {
-      check_for_first_time_logedin = false;
-      alert('User is not logged in, please login first!');
-      console.log('Navigating to /login');
-      navigate('/login');
-    } else {
+    const token = localStorage.getItem('loggedInUserToken');
+    try {
+      const decodedToken = jwtDecode(token);
+      const user = decodedToken.username;
       setLoggedInUser(user);
+    } catch (error) {
+      if (check_for_first_time_logedin) {
+        console.error('Invalid token:', error);
+        alert('User is not logged in, please login first!');
+        navigate('/login');
+        check_for_first_time_logedin = false;
+      }
     }
 
+
     const fetchDisplayName = async () => {
-      try{
-      const db = await openDB('MeaTubeDB');
-      const transaction = db.transaction(["users"], "readonly");
-      const objectStore = transaction.objectStore("users");
-      const logedinUserdata = await objectStore.get(user);
-      setchannel(logedinUserdata.displayName);
+      try {
+        const logedinUserdata = await ServerAPI.getUserByUsername(loggedInUser);
+        setchannel(logedinUserdata.displayName);
       } catch (error) {
-        console.error('Could not fetch user data if the user isnot loggin yet it ok:', error);
+        console.error('Could not fetch user data if the user is not logged in yet it is ok:', error);
       }
     };
-  
-    fetchDisplayName(); 
-  }, [navigate]);
+
+    fetchDisplayName();
+  }, [navigate, loggedInUser]);
 
 
   const handleVideoChange = (e) => {
@@ -88,22 +90,12 @@ function AddMovie() {
       previewImage,
       channel,
       username: loggedInUser,
-      uploadTime: new Date().toISOString(),
-      views: 0,
-      likes: 0,
-      dislikes: 0,
-      comments: 0,
-      commentsLink: [],
     };
 
     console.log('newVideo:', newVideo);
 
     try {
-      const db = await openDB('MeaTubeDB');
-      const tx = db.transaction('videos', 'readwrite');
-      const store = tx.objectStore('videos');
-      await store.add(newVideo);
-      await tx.complete;
+      ServerAPI.addVideo(newVideo, localStorage.getItem('loggedInUserToken'));
       alert('Video saved successfully!');
       formRef.current.reset();
       setTitle('');
@@ -111,7 +103,6 @@ function AddMovie() {
       setVideoFile(null);
       setPreviewImage(null);
       setCategory('');
-
     } catch (error) {
       console.error('Could not save the video to IndexedDB:', error);
     }

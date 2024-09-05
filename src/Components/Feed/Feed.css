@@ -6,27 +6,52 @@
     margin-top: 15px;
 }
 
-.card img{
+.card {
+    position: relative;
+    width: 100%; /* Ensure the card takes full width of its container */
+    
+}
+.img-container {
+    position: relative;
     width: 100%;
-    height: 56.25%;
+    aspect-ratio: 16 / 9;
     border-radius: 5px;
+    overflow: hidden;
+    background-color: black;
 }
 
-.card h2{
+.img-container img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.card h2 {
     font-size: 16px;
     font-weight: 600;
     color: var(--primary-text-color);
     margin: 5px 0;
 }
 
-.card h3{
+.card h3 {
     font-size: 14px;
     font-weight: 600;
     color: var(--secondary-text-color);
     margin: 6px 0;
 }
 
-.card p{
+.card p {
     font-size: 14px;
     color: var(--secondary-text-color);
+}
+
+.profileforvideocardspic {
+    width: 35px !important;
+    height: 35px !important; /* Ensures the height is equal to the width for a perfect circle */
+    margin-right: 10px;
+    border-radius: 50% !important; /* Makes the image circular */
+    object-fit: cover !important; /* Ensures the image covers the area without stretching */
 }

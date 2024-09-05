@@ -1,0 +1,35 @@
+
+  .channel-logo {
+    width: 150px !important;
+    height: 150px !important; /* Ensures the height is equal to the width for a perfect circle */
+    margin-right: 10px;
+    border-radius: 50% !important; /* Makes the image circular */
+    object-fit: cover !important; /* Ensures the image covers the area without stretching */
+  }
+  
+  .text-primary {
+    font-size: 40px;
+    font-weight: 600;
+    color: var(--primary-text-color);
+    margin: 5px 0;
+  }
+  
+  .text-secondary {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--secondary-text-color);
+    margin: 6px 0;
+  }
+  
+  .text-muted {
+    font-size: 20px;
+    color: var(--secondary-text-color);
+  }
+
+  .full-width-line {
+    width: 100%;
+    border: 0;
+    height: 1px;
+    background: var(--primary-text-color); /* Adjust the color as needed */
+    margin: 20px 0; /* Adjust the margin as needed */
+  }

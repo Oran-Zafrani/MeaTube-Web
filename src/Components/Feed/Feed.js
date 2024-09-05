@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Feed.css';
 import VideoCard from './VideoCard';
-import { openDB } from 'idb';
+import ServerAPI from '../../ServerAPI';
 
 function Feed(searchString) {
   const [videos, setVideos] = useState([]);
@@ -37,10 +37,7 @@ function handleSearch(videos, searchStr) {
 }
 
 export async function getVideos() {
-  const db = await openDB('MeaTubeDB');
-  const tx = db.transaction('videos', 'readonly');
-  const store = tx.objectStore('videos');
-  const allVideos = await store.getAll();
+  const allVideos = await ServerAPI.getTop20Videos();
   return allVideos;
 }
 export default Feed;
