@@ -22,6 +22,7 @@ function EditUser() {
         const user = await ServerAPI.getUserByUsername(username);
         if (user) {
           setPassword(user.password);
+          setPasswordConfirmation(user.password);
           setDisplayName(user.displayName);
           setImage(user.image);
         } else {
