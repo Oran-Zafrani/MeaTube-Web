@@ -1,7 +1,7 @@
 
 # MeaTube Client Web Project
 
-This README explains how to set up and run the MeaTube client web project.
+This README explains setting up and running the MeaTube client web project.
 
 ## Prerequisites
 
@@ -52,8 +52,13 @@ This will run the app in development mode. Open [http://localhost:3000](http://l
 5. Data Storage:
   - Initially used local storage.
   - Faced limitations due to its 5 MB capacity.
-  - Refactored the code to use IndexedDB for more robust and scalable data storage.
+  - Refactored the code to use IndexedDB for more robust and scalable data storage in exercise 1, the data in the following exercises has moved to MongoDB.
 6. Testing: We performed manual tests to ensure functionality.
+
+## Instructions to Adv.System Programming Course Checker 
+1. The final src codes are wrapped under 'releases/**' branches. each one of them referring to a different part of the project.
+2. We've included assets as users and video JSONs as a mock database under the 'assets' folder. the JSONs have been used only on ex1, the following branches have the JSONs but without any use.
+3. the release of exercises 2 and on are not operatable without initialization of the BE server, refer to the MeaTube-Server repo to initialize the BE server.
 
 ## Troubleshooting
 
