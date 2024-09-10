@@ -56,9 +56,9 @@ This will run the app in development mode. Open [http://localhost:3000](http://l
 6. Testing: We performed manual tests to ensure functionality.
 
 ## Instructions to Adv. System Programming Course Checker 
-1. The final src codes are wrapped under 'releases/**' branches. each one of them referring to a different part of the project.
-2. We've included assets as users and video JSONs as a mock database under the 'assets' folder. the JSONs have been used only on ex1, the following branches have the JSONs but without any use.
-3. the release of exercises 2 and on are not operatable without initialization of the BE server, refer to the MeaTube-Server repo to initialize the BE server.
+1. The final src codes are wrapped under `releases/**` branches. each one of them referring to a different part of the project.
+2. We've included assets as users and video JSONs as a mock database under the 'assets' folder. the JSONs have been used only on ex1, the following branches still have the JSONs but without any use.
+3. the release of exercises 2 and on are not operatable without initialization of the BE server, refer to the [MeaTube-Server](https://github.com/Oran-Zafrani/MeaTube-Server) repo to initialize the BE server.
 
 ## Troubleshooting
 
