@@ -37,8 +37,8 @@ npm start
 This will run the app in development mode. Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 ## Work Process
-1. Planning: We started by planning the project, defining requirements, and creating a basic interface design.
-2. Task Management - We used Jira to manage tasks and track progress:
+1. Planning: We started by planning the project, defining requirements, and creating a basic interface design. [link for jira](https://sbar1998.atlassian.net/jira/software/projects/MTW/boards/3).
+2. Task Management - We used Jira to manage tasks and track progress: 
   - Tasks were divided into sprints.
   - Jira boards were utilized to visualize the workflow and status of each task.
   - This ensured transparency and effective collaboration.
